@@ -384,3 +384,96 @@ CTR by position_tier (notebook 01, Discovery B; pages with impressions_90d >= 10
 
 ---
 
+## Comparison table
+
+| Version | Technique | Output words | Uses the input bundle? | Invented facts | Structured? | Observed improvement | Usefulness (1–5) |
+|---------|-----------|-------------:|------------------------|---------------:|:-----------:|----------------------|-----------------:|
+| V0 | none | 122 | no | 6 | no | generic fluff | 1 |
+| V1 | role assignment | 175 | partial | 1 | yes | metrics appear | 3 |
+| V2 | context and motivation | 190 | yes | 0 | yes | budget framing | 4 |
+| V3 | few-shot examples | 141 | yes | 0 | yes | tighter prose | 4 |
+| V4 | output structure | 135 | yes | 0 | yes | skimmable | 5 |
+| V5 | step decomposition | 153 | yes | 0 | yes | leakage + cannot-claim | 5 |
+
+---
+
+## Cross-model comparison (final prompt V5)
+
+**Model:** Claude — executed in Cursor (Composer agent); no Anthropic API key in this environment. Output below is a fresh run of the V5 prompt text above.
+
+**Output (Claude / Cursor):**
+
+> ## Results
+>
+> ### Headline metric
+> On `client_holdout` test pages, Precision@50 was **0.240** for the hand-written rule baseline (~12 of 50) and **0.740** for the random forest (~37 of 50) on the 30,000-row anonymized starter file.
+>
+> ### Why ranking beats classification here
+> **54.2%** of pages show declining trend direction in this dataset, so editors need a ranked top-N queue for weekly capacity rather than a binary alert on every row.
+>
+> ### Position context (Discovery B)
+> Among pages with `impressions_90d >= 100`, mean `ctr` was **0.3341%** in `top_3` and **0.1424%** in `page_3_5`, describing lower measured click-through deeper in the SERP in this slice.
+>
+> ## Limitations
+>
+> - **Label/proxy:** Rankings rely on a trailing-window decline proxy; post-refresh traffic was not measured.
+> - **Validation scope:** Client holdout on this CSV does not guarantee the same Precision@50 on new clients or dates.
+
+**Model:** ChatGPT — *not run in this environment (no OpenAI API access). Paste manual run below.*
+
+**Output (ChatGPT — paste here):**
+
+```
+<!-- Run the V5 prompt verbatim in ChatGPT and paste the model output between these fences. -->
+```
+
+| Axis | Claude (Cursor) | ChatGPT |
+|------|-----------------|---------|
+| **Tone** | Terse, report-like; avoids hype but repeats “this dataset/slice” hedges in every subsection. | *Pending manual paste.* |
+| **Accuracy** | All cited numbers match the bundle; did not restate the trend-field feature ban from V5 instruction. | *Pending manual paste.* |
+| **Structure** | Honored three Results subsections and two limitation bullets; no tables. | *Pending manual paste.* |
+| **Failure points** | Omitted explicit “cannot claim refresh caused recovery” sentence that V5’s internal checklist requested. | *Pending manual paste.* |
+
+---
+
+## Final reusable template
+
+Uses **V4 structure + V2 motivation + V3 observational examples + V5 leakage/cannot-claim rules**, without V5’s silent planning step — strangers get the guardrails in the template itself instead of hidden decomposition.
+
+```
+You are a technical writer drafting the Results and Limitations sections of an ML capstone report for a hiring manager who will skim in under two minutes.
+
+Problem type: ranked decision support (top-N queue), not classification for its own sake.
+
+Context and motivation:
+- Frame the work as allocating scarce weekly capacity to the highest-value pages.
+- Observational language only: no causation, no “proves,” no production guarantees, no revenue claims unless provided in facts.
+- If decline/trend fields appear in facts, treat them as label-related; never describe them as model features.
+
+Style targets:
+- Good: “Precision@50 on held-out clients was 0.24 vs 0.74 (~12 vs ~37 of 50 decline-labelled in the top shortlist).”
+- Bad: “The model fixes SEO and is deployment-ready.”
+
+Required structure:
+1. ## Results
+   - ### Headline metric — primary ranking metric vs baseline on the stated validation split.
+   - ### Why ranking beats classification here — base rate / abundance argument using supplied prevalence.
+   - ### Position or visibility context — one paragraph tying a supplied CTR or impressions pattern to why order matters.
+2. ## Limitations
+   - Bullet on label/proxy (what was not measured).
+   - Bullet on validation scope (what the split does and does not cover).
+3. Under 220 words. No tables. Every number must come from FACTS below.
+
+FACTS (paste your run — do not invent):
+<<<FACTS
+- Framing question: …
+- Dataset path, rows, columns, unit of analysis: …
+- Decline prevalence or label rate: …
+- Validation split name and rule: …
+- Metric name and baseline vs best model values: …
+- One CTR or visibility pattern with filter notes: …
+>>>
+
+Leakage rule (always include in Limitations if trend fields define labels):
+- State that you cannot claim refreshing caused outcomes; you only ranked pages under a proxy label on the stated split.
+```
