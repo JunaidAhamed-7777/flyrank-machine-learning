@@ -67,3 +67,21 @@ INDEX appended=work/agent/digests/index.md
 
 (Post-run: empty 2026-10-04 digest restored; ranked output filed as `2026-10-05.md`.)
 
+## 2026-10-05T00:30:00Z — digest path never overwrites
+**Did:** Updated `digest_path()` to suffix `-HHMM` (or `-HHMMSS` on same-minute collision) when `YYYY-MM-DD.md` already exists.
+**Broke:** Same-day reruns targeted `YYYY-MM-DD.md` and required manual rename to keep the empty-week file — violates end-to-end without hand-editing.
+**Fixed by:** Path selection in `render.py`; `run.py` passes UTC `run_time`; stdout/index use the resolved path.
+**Cut from spec:** nothing this entry
+
+### Live re-run stdout (unedited)
+
+```
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.IR&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=132554 items=50
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.LG&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=120683 items=50
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=125089 items=50
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.AI&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=130481 items=50
+FILTER keyword_hits=36 tie_in_survivors=36 tie_in_dropped=0 ranked=5
+DIGEST written=work/agent/digests/2026-10-04-2330.md
+INDEX appended=work/agent/digests/index.md
+```
+

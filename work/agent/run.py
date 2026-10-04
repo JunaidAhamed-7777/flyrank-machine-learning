@@ -17,7 +17,8 @@ from render import append_index, digest_path, render_digest, write_digest  # noq
 
 
 def main() -> int:
-    run_date = datetime.now(timezone.utc).date()
+    run_time = datetime.now(timezone.utc)
+    run_date = run_time.date()
     items, _logs, failures = fetch_arxiv_recent()
     items = approved_items(items)
     fetch_total = len(items)
@@ -35,7 +36,7 @@ def main() -> int:
         source_failures=failures if failures else None,
         fetch_item_total=fetch_total,
     )
-    out_path = digest_path(run_date)
+    out_path = digest_path(run_date, run_time)
     write_digest(body, out_path)
     append_index(out_path, len(ranked), run_date=run_date)
     print(f"DIGEST written={out_path.relative_to(_REPO_ROOT).as_posix()}")

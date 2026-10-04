@@ -17,9 +17,21 @@ def digests_dir() -> Path:
     return agent_root() / "digests"
 
 
-def digest_path(run_date: date | None = None) -> Path:
-    d = run_date or datetime.now(timezone.utc).date()
-    return digests_dir() / f"{d.isoformat()}.md"
+def digest_path(
+    run_date: date | None = None,
+    run_time: datetime | None = None,
+) -> Path:
+    """Pick a digest path; never target an existing file."""
+    now = run_time or datetime.now(timezone.utc)
+    d = run_date or now.date()
+    daily = digests_dir() / f"{d.isoformat()}.md"
+    if not daily.exists():
+        return daily
+    stamped = digests_dir() / f"{d.isoformat()}-{now.strftime('%H%M')}.md"
+    if not stamped.exists():
+        return stamped
+    # Same UTC minute as an earlier run today — add seconds to avoid overwrite.
+    return digests_dir() / f"{d.isoformat()}-{now.strftime('%H%M%S')}.md"
 
 
 def render_digest(
