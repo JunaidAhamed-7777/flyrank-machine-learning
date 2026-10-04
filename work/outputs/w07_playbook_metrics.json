@@ -1,0 +1,37 @@
+{
+  "run_timestamp_utc": "2026-10-04T23:57:37+00:00",
+  "data_source": "warehouse_month_2026-03",
+  "decision_date": "2026-03-31",
+  "row_count": 37385,
+  "slice_base_decline_rate": 0.2097900227363916,
+  "p50_loo_rf_mean": 0.258445165945166,
+  "p50_loo_rf_std": 0.23664299012639262,
+  "archetype_counts": {
+    "CONTENT_AGING": 109,
+    "HIGH_LEVERAGE_REFRESH": 13336,
+    "LOW_SIGNAL": 25,
+    "NEW_OR_UNCLEAR": 2,
+    "SNIPPET_OPTIMIZATION": 1796,
+    "STABLE_HIGH_PERFORMER": 15038,
+    "UNDEREXPOSED_DECLINE": 7079
+  },
+  "action_counts": {
+    "CTR/snippet fix, not a rewrite": 1796,
+    "Deprioritise \u2014 no refresh this cycle": 7079,
+    "Manual triage \u2014 no model action": 2,
+    "No action": 25,
+    "Protect \u2014 do not touch": 15038,
+    "Refresh content": 13336,
+    "Refresh on next cycle": 109
+  },
+  "reason_code_counts": {
+    "STABLE_PERFORMER_PROTECT": 15038,
+    "HIGH_LEVERAGE_REFRESH": 13336,
+    "UNDEREXPOSED_DECLINE": 7079,
+    "SNIPPET_CTR_HEADROOM": 1796,
+    "CONTENT_AGING_CYCLE": 109,
+    "BELOW_EXPOSURE_FLOOR": 25,
+    "MANUAL_TRIAGE_UNCLEAR": 2
+  },
+  "headline_limitation": "LOO-client P@50 std is 0.237 with seven client folds at 0.0 \u2014 queue value is uneven across clients."
+}
