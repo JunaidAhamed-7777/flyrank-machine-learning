@@ -1,16 +1,19 @@
 {
-  "run_timestamp_utc": "2026-10-04T22:40:49.676588+00:00",
+  "run_timestamp_utc": "2026-10-04T22:51:28.499107+00:00",
   "data_source": "warehouse_month_2026-03",
   "blocked_note": null,
   "row_count_scored": 37385,
-  "rule_name": "staleness_flag_x_impressions_90d",
-  "score_formula": "staleness_flag * impressions_90d; staleness_flag=1 if days_since_last_update>=180 else 0.1",
-  "staleness_threshold_days": 180,
-  "reason_code": "STALE_HIGH_EXPOSURE",
+  "rule_name": "ctr_headroom_x_tier_weight_x_impressions_90d",
+  "score_formula": "impressions_90d * ctr_headroom * tier_weight; ctr_headroom=max(0, tier_median_ctr_last30-ctr_last30)",
+  "pivot_from": "staleness_flag_x_impressions_90d",
+  "pivot_reason": "content_updated_date is snapshot-only; staleness threshold not decision-safe",
+  "content_updated_date_outcome": "Excluded dim_content.content_updated_date from features: snapshot export with 382,739 rows updated after decision 2026-03-31 (max date 2026-07-06 00:00:00); daily fact has no as-of update column.",
+  "ctr_headroom_positive_share": 0.4954125986358165,
+  "reason_code": "CTR_HEADROOM_EXPOSURE",
   "action_label": "REFRESH",
   "base_decline_rate": 0.2097900227363916,
-  "precision_at_50_top50_decline_rate": 0.24,
-  "signal_a_verdict": "MIXED",
+  "precision_at_50_top50_decline_rate": 0.34,
+  "signal_a_verdict": "CONFIRMED",
   "signal_b_verdict": "FALSE",
-  "caveat": "Score ignores trend_direction; top ranks are often high-impression pages with soft 0.1 staleness weight, not true 180d+ stale URLs."
+  "caveat": "CTR headroom is tier-relative; a page with zero headroom scores 0 even if impressions are large."
 }
