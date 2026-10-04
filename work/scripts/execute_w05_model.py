@@ -1,9 +1,8 @@
-"""Run w05 modeling pipeline (same logic as w05_model.ipynb)."""
+"""Run w05 modeling pipeline (honest 4-feature frame + leakage demo)."""
 from __future__ import annotations
 
 import json
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -31,13 +30,13 @@ TIER_WEIGHT = {
     "no_data": 0.0,
 }
 
-FEATURES = [
-    "log_imp_prev30",
+FEATURES_HONEST = [
     "imp_last30",
     "avg_pos_last30",
     "ctr_last30",
     "content_age_days",
 ]
+FEATURES_LEAKY = FEATURES_HONEST + ["log_imp_prev30"]
 
 
 def position_tier(pos: float) -> str:
@@ -85,8 +84,19 @@ def make_client_holdout(frame: pd.DataFrame, target: pd.Series):
         and target.iloc[train_idx].nunique() == 2
         and target.iloc[test_idx].nunique() == 2
     ):
-        return train_idx, test_idx, "client_holdout"
+        return train_idx, test_idx
     raise RuntimeError("client holdout split failed class balance check")
+
+
+def make_rf():
+    return RandomForestClassifier(
+        class_weight="balanced_subsample",
+        max_depth=10,
+        min_samples_leaf=25,
+        n_estimators=200,
+        n_jobs=-1,
+        random_state=RANDOM_STATE,
+    )
 
 
 def load_pages() -> pd.DataFrame:
@@ -172,141 +182,105 @@ def main() -> None:
     pages["log_imp_prev30"] = np.log1p(pages["imp_prev30"])
     pages["position_tier"] = pages["avg_pos_last30"].map(position_tier)
     pages["is_declining_label"] = pages["trend_direction"].str.lower().eq("down").astype(int)
-
     pages["baseline_score"] = baseline_scores(pages)
-    global_p50 = precision_at_k(
-        pages["is_declining_label"], pages["baseline_score"], 50
-    )
-    print(f"rows={len(pages)} base_rate={pages['is_declining_label'].mean():.3f}")
-    print(f"baseline global P@50={global_p50:.2f}")
 
+    global_p50 = precision_at_k(pages["is_declining_label"], pages["baseline_score"], 50)
     y = pages["is_declining_label"]
-    X = pages[FEATURES].replace([np.inf, -np.inf], np.nan).fillna(0)
-    train_idx, test_idx, split_name = make_client_holdout(pages, y)
-    print(f"split={split_name} train_clients={pages.iloc[train_idx]['client_id'].nunique()} "
-          f"holdout_clients={pages.iloc[test_idx]['client_id'].nunique()}")
-
-    train_rate = y.iloc[train_idx].mean()
-    test_rate = y.iloc[test_idx].mean()
-    print(f"train rows={len(train_idx)} rate={train_rate:.3f} holdout rows={len(test_idx)} rate={test_rate:.3f}")
-
-    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+    train_idx, test_idx = make_client_holdout(pages, y)
     y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
-    models = {
-        "Logistic Regression": Pipeline(
-            [
-                ("scaler", StandardScaler()),
-                (
-                    "model",
-                    LogisticRegression(
-                        class_weight="balanced", max_iter=1000, random_state=RANDOM_STATE
-                    ),
-                ),
-            ]
-        ),
-        "Random Forest": RandomForestClassifier(
-            class_weight="balanced_subsample",
-            max_depth=10,
-            min_samples_leaf=25,
-            n_estimators=200,
-            n_jobs=-1,
-            random_state=RANDOM_STATE,
-        ),
-    }
+    X_leaky = pages[FEATURES_LEAKY].replace([np.inf, -np.inf], np.nan).fillna(0)
+    X_honest = pages[FEATURES_HONEST].replace([np.inf, -np.inf], np.nan).fillna(0)
 
-    results = {}
+    rf_leaky = make_rf()
+    rf_leaky.fit(X_leaky.iloc[train_idx], y_train)
+    leaky_p50 = precision_at_k(y_test, rf_leaky.predict_proba(X_leaky.iloc[test_idx])[:, 1], 50)
+
+    rf_honest_probe = make_rf()
+    rf_honest_probe.fit(X_honest.iloc[train_idx], y_train)
+    honest_p50_probe = precision_at_k(
+        y_test, rf_honest_probe.predict_proba(X_honest.iloc[test_idx])[:, 1], 50
+    )
+
     baseline_holdout = pages.iloc[test_idx]["baseline_score"].to_numpy()
-    results["w04 baseline (CTR headroom)"] = {
-        50: precision_at_k(y_test, baseline_holdout, 50),
-        100: precision_at_k(y_test, baseline_holdout, 100),
-        200: precision_at_k(y_test, baseline_holdout, 200),
-        20: precision_at_k(y_test, baseline_holdout, 20),
+    results = {
+        "w04 baseline (CTR headroom)": {
+            "50": precision_at_k(y_test, baseline_holdout, 50),
+            "100": precision_at_k(y_test, baseline_holdout, 100),
+            "200": precision_at_k(y_test, baseline_holdout, 200),
+            "20": precision_at_k(y_test, baseline_holdout, 20),
+        },
     }
 
-    probs = {}
-    for name, model in models.items():
-        model.fit(X_train, y_train)
-        if isinstance(model, Pipeline):
-            p = model.predict_proba(X_test)[:, 1]
-        else:
-            p = model.predict_proba(X_test)[:, 1]
-        probs[name] = p
+    lr = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            (
+                "model",
+                LogisticRegression(
+                    class_weight="balanced", max_iter=1000, random_state=RANDOM_STATE
+                ),
+            ),
+        ]
+    )
+    rf = make_rf()
+    lr.fit(X_honest.iloc[train_idx], y_train)
+    rf.fit(X_honest.iloc[train_idx], y_train)
+    lr_probs = lr.predict_proba(X_honest.iloc[test_idx])[:, 1]
+    rf_probs = rf.predict_proba(X_honest.iloc[test_idx])[:, 1]
+
+    for name, probs in [("Logistic Regression", lr_probs), ("Random Forest", rf_probs)]:
         results[name] = {
-            50: precision_at_k(y_test, p, 50),
-            100: precision_at_k(y_test, p, 100),
-            200: precision_at_k(y_test, p, 200),
-            20: precision_at_k(y_test, p, 20),
+            "50": precision_at_k(y_test, probs, 50),
+            "100": precision_at_k(y_test, probs, 100),
+            "200": precision_at_k(y_test, probs, 200),
+            "20": precision_at_k(y_test, probs, 20),
         }
 
-    lr_p50 = results["Logistic Regression"][50]
-    rf_p50 = results["Random Forest"][50]
-    run_gb = rf_p50 - lr_p50 >= 0.03
+    run_gb = results["Random Forest"]["50"] - results["Logistic Regression"]["50"] >= 0.03
+    gb_probs = None
     if run_gb:
         gb = GradientBoostingClassifier(random_state=RANDOM_STATE)
-        gb.fit(X_train, y_train)
-        gp = gb.predict_proba(X_test)[:, 1]
-        probs["Gradient Boosting"] = gp
+        gb.fit(X_honest.iloc[train_idx], y_train)
+        gb_probs = gb.predict_proba(X_honest.iloc[test_idx])[:, 1]
         results["Gradient Boosting"] = {
-            50: precision_at_k(y_test, gp, 50),
-            100: precision_at_k(y_test, gp, 100),
-            200: precision_at_k(y_test, gp, 200),
-            20: precision_at_k(y_test, gp, 20),
+            "50": precision_at_k(y_test, gb_probs, 50),
+            "100": precision_at_k(y_test, gb_probs, 100),
+            "200": precision_at_k(y_test, gb_probs, 200),
+            "20": precision_at_k(y_test, gb_probs, 20),
         }
 
-    print("\nResults on holdout:")
+    perm = permutation_importance(
+        rf, X_honest.iloc[test_idx], y_test, n_repeats=10, random_state=RANDOM_STATE, n_jobs=-1
+    )
+    imp_df = (
+        pd.DataFrame({"feature": FEATURES_HONEST, "importance": perm.importances_mean})
+        .sort_values("importance", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    print(f"global baseline P@50={global_p50:.2f}")
+    print(f"leakage demo RF: with log_imp_prev30 P@50={leaky_p50:.2f} | without={honest_p50_probe:.2f}")
     for name, m in results.items():
         print(name, m)
-
-    best_name = max(
-        [k for k in results if k != "w04 baseline (CTR headroom)"],
-        key=lambda n: results[n][50],
-    )
-    best_model = models[best_name] if best_name in models else None
-    if best_name == "Gradient Boosting":
-        best_model = gb
-
-    if isinstance(best_model, Pipeline):
-        clf = best_model.named_steps["model"]
-        imp = np.abs(clf.coef_[0])
-        imp_df = pd.DataFrame({"feature": FEATURES, "importance": imp}).sort_values(
-            "importance", ascending=False
-        )
-    else:
-        perm = permutation_importance(
-            best_model,
-            X_test,
-            y_test,
-            n_repeats=10,
-            random_state=RANDOM_STATE,
-            n_jobs=-1,
-        )
-        imp_df = pd.DataFrame(
-            {"feature": FEATURES, "importance": perm.importances_mean}
-        ).sort_values("importance", ascending=False)
-    print("\nPermutation/feature importance:")
     print(imp_df.to_string(index=False))
-
-    top50_idx = np.argsort(-probs[best_name])[:50]
-    holdout = pages.iloc[test_idx].copy()
-    holdout["pred"] = probs[best_name]
-    top50 = holdout.iloc[top50_idx]
-    tp = top50[top50["is_declining_label"] == 1]
-    fp = top50[top50["is_declining_label"] == 0]
-    cols = ["impressions_90d", "ctr_last30", "avg_pos_last30", "content_age_days"]
-    print("\nTP means:")
-    print(tp[cols].mean())
-    print("FP means:")
-    print(fp[cols].mean())
+    print(f"run_gb={run_gb}")
 
     out = {
+        "feature_frame_honest": FEATURES_HONEST,
         "global_baseline_p50": global_p50,
         "row_count": len(pages),
+        "leakage_demo": {
+            "rf_with_log_imp_prev30_p50": leaky_p50,
+            "rf_honest_four_features_p50": honest_p50_probe,
+            "label_definition": "(imp_last30 - imp_prev30) / imp_prev30 < -0.20",
+        },
         "results_holdout": results,
         "run_gb": run_gb,
         "importance": imp_df.to_dict(orient="records"),
-        "train_decline_rate": float(train_rate),
-        "holdout_decline_rate": float(test_rate),
+        "train_decline_rate": float(y.iloc[train_idx].mean()),
+        "holdout_decline_rate": float(y.iloc[test_idx].mean()),
+        "holdout_rows": int(len(test_idx)),
     }
     (OUT_DIR / "w05_model_metrics.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
 

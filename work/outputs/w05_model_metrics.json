@@ -1,6 +1,17 @@
 {
+  "feature_frame_honest": [
+    "imp_last30",
+    "avg_pos_last30",
+    "ctr_last30",
+    "content_age_days"
+  ],
   "global_baseline_p50": 0.34,
   "row_count": 37385,
+  "leakage_demo": {
+    "rf_with_log_imp_prev30_p50": 1.0,
+    "rf_honest_four_features_p50": 0.34,
+    "label_definition": "(imp_last30 - imp_prev30) / imp_prev30 < -0.20"
+  },
   "results_holdout": {
     "w04 baseline (CTR headroom)": {
       "50": 0.24,
@@ -9,47 +20,35 @@
       "20": 0.15
     },
     "Logistic Regression": {
-      "50": 0.62,
-      "100": 0.48,
-      "200": 0.39,
-      "20": 0.8
+      "50": 0.36,
+      "100": 0.34,
+      "200": 0.275,
+      "20": 0.45
     },
     "Random Forest": {
-      "50": 1.0,
-      "100": 1.0,
-      "200": 0.76,
-      "20": 1.0
-    },
-    "Gradient Boosting": {
-      "50": 1.0,
-      "100": 1.0,
-      "200": 0.765,
-      "20": 1.0
+      "50": 0.34,
+      "100": 0.35,
+      "200": 0.275,
+      "20": 0.35
     }
   },
-  "run_gb": true,
+  "run_gb": false,
   "importance": [
     {
-      "feature": "log_imp_prev30",
-      "importance": 0.39150521609537997
+      "feature": "ctr_last30",
+      "importance": -0.00536512667660205
     },
     {
       "feature": "imp_last30",
-      "importance": 0.36080476900149033
-    },
-    {
-      "feature": "ctr_last30",
-      "importance": 0.004619970193740708
-    },
-    {
-      "feature": "avg_pos_last30",
-      "importance": 0.004619970193740686
+      "importance": -0.011922503725782352
     },
     {
       "feature": "content_age_days",
-      "importance": 0.0014903129657227953
+      "importance": -0.016095380029806206
+    },
+    {
+      "feature": "avg_pos_last30",
+      "importance": -0.01892697466467953
     }
-  ],
-  "train_decline_rate": 0.20942964536689002,
-  "holdout_decline_rate": 0.22950819672131148
+  ]
 }
