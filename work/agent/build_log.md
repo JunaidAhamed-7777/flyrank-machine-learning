@@ -47,3 +47,23 @@ INDEX appended=work/agent/digests/index.md
 **Fixed by:** Root workflow file; README updated to point at `.github/workflows/`; design copy kept under `work/agent/workflows/`.
 **Cut from spec:** nothing this entry
 
+## 2026-10-05T00:22:00Z — keyword vocabulary + fetch volume fix
+**Did:** Added IR/ML academic terms to `RELEVANCE_KEYWORDS`; `max_results=50` per category; added `cs.AI`; re-ran live fetch.
+**Broke:** First post-fix run overwrote `digests/2026-10-04.md` (UTC date collision with preserved empty digest).
+**Fixed by:** Restored empty `2026-10-04.md` from prior commit; saved non-empty output as `digests/2026-10-05.md`.
+**Cut from spec:** nothing this entry
+
+### Live re-run stdout (unedited)
+
+```
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.IR&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=132554 items=50
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.LG&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=120683 items=50
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=125089 items=50
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.AI&sortBy=submittedDate&sortOrder=descending&max_results=50 status=200 bytes=130481 items=50
+FILTER keyword_hits=36 tie_in_survivors=36 tie_in_dropped=0 ranked=5
+DIGEST written=work/agent/digests/2026-10-04.md
+INDEX appended=work/agent/digests/index.md
+```
+
+(Post-run: empty 2026-10-04 digest restored; ranked output filed as `2026-10-05.md`.)
+

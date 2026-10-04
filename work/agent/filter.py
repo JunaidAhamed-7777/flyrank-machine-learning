@@ -74,13 +74,15 @@ def filter_and_rank(items: list[ArxivItem]) -> tuple[list[RankedItem], int, int]
     scored.sort(key=lambda x: (-x[1], -x[0].published.timestamp()))
 
     ranked: list[RankedItem] = []
-    passed_tie = 0
+    tie_survivors = 0
     for item, score in scored:
         text = _combined_text(item)
         section, line1, line2 = capstone_tie_in(text)
         if section is None:
             continue
-        passed_tie += 1
+        tie_survivors += 1
+        if len(ranked) >= MAX_RANKED_ITEMS:
+            continue
         ranked.append(
             RankedItem(
                 item=item,
@@ -91,10 +93,8 @@ def filter_and_rank(items: list[ArxivItem]) -> tuple[list[RankedItem], int, int]
                 verdict=verdict_for(score, section),
             )
         )
-        if len(ranked) >= MAX_RANKED_ITEMS:
-            break
 
-    return ranked, len(scored), passed_tie
+    return ranked, len(scored), tie_survivors
 
 
 def is_approved_url(url: str) -> bool:

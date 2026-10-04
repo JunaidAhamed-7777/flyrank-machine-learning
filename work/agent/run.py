@@ -23,7 +23,11 @@ def main() -> int:
     fetch_total = len(items)
 
     ranked, keyword_hits, tie_hits = filter_and_rank(items)
-    print(f"FILTER keyword_hits={keyword_hits} tie_in_survivors={tie_hits} ranked={len(ranked)}")
+    gate_dropped = keyword_hits - tie_hits
+    print(
+        f"FILTER keyword_hits={keyword_hits} tie_in_survivors={tie_hits} "
+        f"tie_in_dropped={gate_dropped} ranked={len(ranked)}"
+    )
 
     body = render_digest(
         ranked,
