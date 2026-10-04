@@ -1,0 +1,55 @@
+{
+  "global_baseline_p50": 0.34,
+  "row_count": 37385,
+  "results_holdout": {
+    "w04 baseline (CTR headroom)": {
+      "50": 0.24,
+      "100": 0.29,
+      "200": 0.275,
+      "20": 0.15
+    },
+    "Logistic Regression": {
+      "50": 0.62,
+      "100": 0.48,
+      "200": 0.39,
+      "20": 0.8
+    },
+    "Random Forest": {
+      "50": 1.0,
+      "100": 1.0,
+      "200": 0.76,
+      "20": 1.0
+    },
+    "Gradient Boosting": {
+      "50": 1.0,
+      "100": 1.0,
+      "200": 0.765,
+      "20": 1.0
+    }
+  },
+  "run_gb": true,
+  "importance": [
+    {
+      "feature": "log_imp_prev30",
+      "importance": 0.39150521609537997
+    },
+    {
+      "feature": "imp_last30",
+      "importance": 0.36080476900149033
+    },
+    {
+      "feature": "ctr_last30",
+      "importance": 0.004619970193740708
+    },
+    {
+      "feature": "avg_pos_last30",
+      "importance": 0.004619970193740686
+    },
+    {
+      "feature": "content_age_days",
+      "importance": 0.0014903129657227953
+    }
+  ],
+  "train_decline_rate": 0.20942964536689002,
+  "holdout_decline_rate": 0.22950819672131148
+}
