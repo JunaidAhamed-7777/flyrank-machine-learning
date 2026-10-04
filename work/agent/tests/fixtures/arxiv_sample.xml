@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <title>Learning to Rank for Search with Position Bias</title>
+    <id>http://arxiv.org/abs/2603.00001</id>
+    <published>2026-03-28T10:00:00Z</published>
+    <summary>We study learning to rank under position bias on SERP click-through data for query performance.</summary>
+    <link href="http://arxiv.org/abs/2603.00001" rel="alternate" type="text/html"/>
+    <category term="cs.IR"/>
+  </entry>
+  <entry>
+    <title>Generic LLM Hype Without SEO</title>
+    <id>http://arxiv.org/abs/2603.00002</id>
+    <published>2026-03-27T10:00:00Z</published>
+    <summary>Yet another large language model benchmark on unrelated tasks.</summary>
+    <link href="http://arxiv.org/abs/2603.00002" rel="alternate" type="text/html"/>
+    <category term="cs.CL"/>
+  </entry>
+</feed>

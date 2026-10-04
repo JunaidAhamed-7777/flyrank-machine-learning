@@ -17,3 +17,26 @@
 **Broke:** E03 failed — fixture note contained the substring `decline` and tie-in map matched `w01`; E04 ranked items with empty abstract; E01 `append_index` crashed on tmp paths outside `work/agent`.
 **Fixed by:** Tightened w01 tie phrases; skip items with empty abstract; fallback index path when digest not under agent root.
 **Cut from spec:** nothing this entry
+
+## 2026-10-04T23:22:00Z — renderer + schedule YAML
+**Did:** `run.py` CLI, `digests/index.md`, `work/agent/workflows/refresh-signal-scout.yml` (`cron: '0 8 * * 1'`).
+**Broke:** GitHub Actions only loads workflows from repo-root `.github/workflows/` — YAML under `work/agent/workflows/` is inert until copied.
+**Fixed by:** Documented copy step in `work/agent/README.md` (kept all committed artifacts under `work/agent/` per build constraint).
+**Cut from spec:** nothing this entry
+
+## 2026-10-04T23:26:00Z — first full end-to-end live run
+**Did:** `python work/agent/run.py` against live export.arxiv.org; wrote digest + index append.
+**Broke:** nothing this entry (empty ranked section is valid).
+**Fixed by:** n/a
+**Cut from spec:** nothing this entry
+
+### Live run stdout (unedited)
+
+```
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.IR&sortBy=submittedDate&sortOrder=descending&max_results=10 status=200 bytes=26496 items=10
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.LG&sortBy=submittedDate&sortOrder=descending&max_results=10 status=200 bytes=26113 items=10
+FETCH url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&sortBy=submittedDate&sortOrder=descending&max_results=10 status=200 bytes=27553 items=10
+FILTER keyword_hits=0 tie_in_survivors=0 ranked=0
+DIGEST written=work/agent/digests/2026-10-04.md
+INDEX appended=work/agent/digests/index.md
+```
