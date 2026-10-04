@@ -1,4 +1,3 @@
-# Design copy — runnable workflow is .github/workflows/refresh-signal-scout.yml
 name: refresh-signal-scout
 
 on:

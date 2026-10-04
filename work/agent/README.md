@@ -21,9 +21,9 @@ pytest work/agent/tests/
 
 ## Schedule
 
-Workflow definition: `work/agent/workflows/refresh-signal-scout.yml` (`cron: '0 8 * * 1'` Monday 08:00 UTC).
+GitHub Actions workflow: `.github/workflows/refresh-signal-scout.yml` (`cron: '0 8 * * 1'` Monday 08:00 UTC, plus `workflow_dispatch`).
 
-GitHub only runs workflows from `.github/workflows/`. Copy this file there (or symlink) before enabling the cron job.
+A duplicate YAML lives under `work/agent/workflows/` for reference only.
 
 ## Outputs
 

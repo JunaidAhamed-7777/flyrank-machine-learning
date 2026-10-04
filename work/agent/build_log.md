@@ -40,3 +40,10 @@ FILTER keyword_hits=0 tie_in_survivors=0 ranked=0
 DIGEST written=work/agent/digests/2026-10-04.md
 INDEX appended=work/agent/digests/index.md
 ```
+
+## 2026-10-05T00:15:00Z — workflow path fix
+**Did:** Added runnable `.github/workflows/refresh-signal-scout.yml` (same cron and `workflow_dispatch` as design copy).
+**Broke:** Scheduled runs never fired — GitHub ignores YAML under `work/agent/workflows/`.
+**Fixed by:** Root workflow file; README updated to point at `.github/workflows/`; design copy kept under `work/agent/workflows/`.
+**Cut from spec:** nothing this entry
+
