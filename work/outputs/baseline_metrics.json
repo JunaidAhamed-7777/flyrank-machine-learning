@@ -1,0 +1,16 @@
+{
+  "run_timestamp_utc": "2026-10-04T22:40:49.676588+00:00",
+  "data_source": "warehouse_month_2026-03",
+  "blocked_note": null,
+  "row_count_scored": 37385,
+  "rule_name": "staleness_flag_x_impressions_90d",
+  "score_formula": "staleness_flag * impressions_90d; staleness_flag=1 if days_since_last_update>=180 else 0.1",
+  "staleness_threshold_days": 180,
+  "reason_code": "STALE_HIGH_EXPOSURE",
+  "action_label": "REFRESH",
+  "base_decline_rate": 0.2097900227363916,
+  "precision_at_50_top50_decline_rate": 0.24,
+  "signal_a_verdict": "MIXED",
+  "signal_b_verdict": "FALSE",
+  "caveat": "Score ignores trend_direction; top ranks are often high-impression pages with soft 0.1 staleness weight, not true 180d+ stale URLs."
+}
