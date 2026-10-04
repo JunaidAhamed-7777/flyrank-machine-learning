@@ -1,0 +1,10 @@
+{
+  "p50_insample_rf": 0.92,
+  "p50_w05_holdout_rf": 0.38,
+  "p50_w05_holdout_baseline": 0.24,
+  "p50_loo_rf_mean": 0.258445165945166,
+  "p50_loo_rf_std": 0.23664299012639262,
+  "p50_time_aware_rf": 0.44,
+  "global_baseline_p50": 0.34,
+  "loo_baseline_mean": 0.17344516594516593
+}
