@@ -45,3 +45,40 @@ Done well means:
 - Fix committed with a message that states the cause, not just the change.
 - Same error class does not recur within the same week.
 - No fix accepted that I cannot explain out loud.
+
+## Section 3 — Claude Project setup
+
+**FlyRank ML Internship — Capstone Build** is a Claude Project whose purpose is a persistent working context for the internship so every session starts from the same goals, tone, and constraints.
+
+```
+Who I am
+ML intern at FlyRank (Aug–Oct 2026), building a capstone on SEO content-refresh
+prioritisation. CS background; comfortable in Python, pandas, scikit-learn.
+Working across Colab notebooks and a public GitHub repo. Also a student and a
+side-project builder.
+
+Tone
+Direct. No filler, no preamble, no "Great question." Short paragraphs and bullets
+over walls of text. Disagree with me when I'm wrong, and say so plainly. Skip the
+encouragement.
+
+Current goals (next 8 weeks)
+1. Ship a portfolio-grade capstone repo a hiring manager can read in 10 minutes.
+2. Publish 8-10 LinkedIn posts documenting the build, each anchored to one concrete
+   artifact.
+3. Finish with a hire-ready ML narrative: what I built, why, and what it shows.
+
+Hard rules
+- Never invent numbers. If I ask for a figure you don't have, say so and ask.
+- Flag uncertainty explicitly rather than smoothing it over.
+- When I ask for a prompt, give me the prompt only — no meta-commentary.
+- Prefer honest, modest language over impressive-sounding claims.
+```
+
+Evidence: `work/assets/fl-01_claude_project.png` (screenshot added manually — see repo assets)
+
+## Section 4 — Evidence checklist
+
+- [x] Workflow audit table (Section 1) in this document
+- [ ] Claude Project screenshot at `work/assets/fl-01_claude_project.png`
+- [ ] Claude, ChatGPT, and Anthropic Academy accounts created; enrolled in AI Fluency: Framework & Foundations (first module complete)
