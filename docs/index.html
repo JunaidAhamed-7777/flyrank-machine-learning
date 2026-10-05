@@ -3,17 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ranking Pages for Content Refresh: An Honest Baseline, a Leaky Model, and a Prioritisation Playbook</title>
+  <title>Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="canonical" href="https://junaidahamed-7777.github.io/flyrank-machine-learning/">
   <meta name="author" content="Junaid Ahamed">
-  <meta name="description" content="A ranking study of weekly content-refresh prioritisation on 37,385 pseudonymized pages, with honest LOO-client P@50 = 0.258 ± 0.237.">
-  <meta property="og:title" content="Ranking Pages for Content Refresh: An Honest Baseline, a Leaky Model, and a Prioritisation Playbook">
-  <meta property="og:description" content="A ranking study of weekly content-refresh prioritisation on 37,385 pseudonymized pages, with honest LOO-client P@50 = 0.258 ± 0.237.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="A March 2026 ranking study of content-refresh queues on 37,385 pseudonymized pages. Leave-one-client-out Precision@50 is 0.26 ± 0.24.">
+  <meta property="og:title" content="Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation">
+  <meta property="og:description" content="A March 2026 ranking study of content-refresh queues on 37,385 pseudonymized pages. Leave-one-client-out Precision@50 is 0.26 ± 0.24.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://junaidahamed-7777.github.io/flyrank-machine-learning/">
+  <meta property="og:image" content="https://junaidahamed-7777.github.io/flyrank-machine-learning/assets/og-card.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Ranking Pages for Content Refresh: An Honest Baseline, a Leaky Model, and a Prioritisation Playbook">
-  <meta name="twitter:description" content="A ranking study of weekly content-refresh prioritisation on 37,385 pseudonymized pages, with honest LOO-client P@50 = 0.258 ± 0.237.">
+  <meta name="twitter:title" content="Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation">
+  <meta name="twitter:description" content="A March 2026 ranking study of content-refresh queues on 37,385 pseudonymized pages. Leave-one-client-out Precision@50 is 0.26 ± 0.24.">
+  <meta name="twitter:image" content="https://junaidahamed-7777.github.io/flyrank-machine-learning/assets/og-card.png">
+  <meta name="citation_title" content="Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation">
+  <meta name="citation_author" content="Junaid Ahamed">
+  <meta name="citation_publication_date" content="2026/10/05">
+  <meta name="citation_online_date" content="2026/10/05">
+  <meta name="citation_abstract_html_url" content="https://junaidahamed-7777.github.io/flyrank-machine-learning/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation",
+    "author": { "@type": "Person", "name": "Junaid Ahamed" },
+    "datePublished": "2026-10-05",
+    "dateModified": "2026-10-05",
+    "url": "https://junaidahamed-7777.github.io/flyrank-machine-learning/",
+    "image": "https://junaidahamed-7777.github.io/flyrank-machine-learning/assets/og-card.png",
+    "description": "A March 2026 ranking study of content-refresh queues on 37,385 pseudonymized pages. Leave-one-client-out Precision@50 is 0.26 ± 0.24."
+  }
+  </script>
   <style>
     /* Typography: self-hosted Source Serif 4 (body) and Inter (UI, TOC).
        Both are SIL Open Font License 1.1 — see docs/assets/fonts/LICENSE-*.txt.
@@ -70,6 +92,7 @@
       --sidenote: #5c5a55;
       --callout-bg: #f4f3ee;
       --focus: #3b4cca;
+      --bar-baseline: #b7b4ac;
     }
 
     * { box-sizing: border-box; }
@@ -100,10 +123,15 @@
     }
 
     .toc {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--bg);
       font-family: Inter, system-ui, sans-serif;
       font-size: 0.78rem;
       line-height: 1.4;
       margin: 0 0 1.25rem;
+      padding: 0.45rem 0;
     }
     .toc ol {
       list-style: none;
@@ -113,11 +141,6 @@
       gap: 0.85rem;
       overflow-x: auto;
       white-space: nowrap;
-      position: sticky;
-      top: 0;
-      background: var(--bg);
-      padding: 0.45rem 0;
-      z-index: 2;
     }
     .toc a {
       color: var(--muted);
@@ -184,7 +207,7 @@
       margin: 1.6rem 0 0.4rem;
     }
     p { margin: 0 0 1rem; }
-    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.15em; overflow-wrap: anywhere; word-break: break-word; }
     a:hover { text-decoration-thickness: 2px; }
     :focus-visible {
       outline: 2px solid var(--focus);
@@ -199,9 +222,7 @@
       overflow-wrap: anywhere;
     }
 
-    .abstract {
-      margin: 1.75rem 0 1.5rem;
-    }
+    .abstract { margin: 1.75rem 0 1.5rem; }
     .abstract-label {
       font-family: Inter, system-ui, sans-serif;
       font-size: 0.72rem;
@@ -213,26 +234,14 @@
     }
     .abstract-body p { margin: 0; }
 
-    .findings {
-      background: var(--callout-bg);
-      padding: 0.9rem 1rem 0.35rem;
-      margin: 0 0 2rem;
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.1rem 0 1.5rem;
     }
-    .findings .kicker {
-      font-family: Inter, system-ui, sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin: 0 0 0.45rem;
-    }
-    .findings ul { margin: 0; padding-left: 1.15rem; }
-    .findings li { margin-bottom: 0.45rem; font-size: 0.95rem; }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 1.1rem 0 1.5rem;
+      margin: 0;
       font-size: 0.92rem;
       line-height: 1.45;
     }
@@ -269,7 +278,6 @@
       text-align: left;
       line-height: 1.45;
     }
-    figcaption strong { color: var(--text); }
     .fig-full {
       font-family: Inter, system-ui, sans-serif;
       font-size: 0.85rem;
@@ -280,8 +288,6 @@
     ul, ol { margin: 0 0 1rem; padding-left: 1.25rem; }
     li { margin-bottom: 0.45rem; }
 
-    /* Sidenotes: absolute into the right gutter on wide screens;
-       stacked under the reference everywhere else. */
     .sidenote {
       display: block;
       margin: 0.65rem 0 1rem;
@@ -296,12 +302,10 @@
       font-size: 0.72rem;
       text-decoration: none;
       margin-left: 0.1rem;
+      vertical-align: super;
     }
 
-    .cite {
-      margin-top: 2.75rem;
-      padding-top: 0.25rem;
-    }
+    .cite { margin-top: 2.75rem; padding-top: 0.25rem; }
     .cite h2 { margin-top: 0; }
     .cite-apa { font-size: 0.95rem; }
     .bib {
@@ -313,6 +317,22 @@
       white-space: pre-wrap;
       margin: 0.5rem 0 0;
     }
+    .copy-bib {
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--rule);
+      padding: 0.3rem 0.65rem;
+      cursor: pointer;
+    }
+    .copy-status {
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      margin: 0.35rem 0 0;
+    }
 
     footer.colophon {
       margin-top: 2.5rem;
@@ -320,7 +340,18 @@
       border-top: 1px solid var(--rule);
       font-size: 0.92rem;
     }
-    footer.colophon .credit { font-size: 1rem; }
+
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     @media (min-width: 768px) {
       body {
@@ -333,17 +364,19 @@
       }
       .skip { grid-column: 1 / -1; }
       .toc {
-        position: sticky;
+        grid-column: 1;
         top: 1.5rem;
         margin: 0;
+        padding: 0;
+      }
+      main {
+        grid-column: 2;
+        min-width: 0;
       }
       .toc ol {
         display: block;
         overflow: visible;
         white-space: normal;
-        position: static;
-        padding: 0;
-        background: transparent;
       }
       .toc li { margin: 0 0 0.4rem; }
       article { margin: 0; max-width: 66ch; }
@@ -371,12 +404,13 @@
         border: 0;
         font-size: 0.82rem;
       }
-      #limitations { padding-bottom: 4.5rem; }
     }
 
     @media (max-width: 767px) {
+      html, body { overflow-x: clip; }
       body { font-size: 16px; }
       h1 { font-size: 1.45rem; }
+      .toc, .toc ol { max-width: 100%; }
       table { font-size: 0.82rem; }
       th, td { padding: 0.4rem 0.25rem; }
     }
@@ -391,13 +425,21 @@
         --rule: #3a3934;
         --callout-bg: #1d1d1b;
         --focus: #9aa6ff;
-      }
-      figure img {
-        filter: invert(1) hue-rotate(180deg);
+        --bar-baseline: #8d8a82;
       }
     }
 
     @media print {
+      :root {
+        --text: #000;
+        --bg: #fff;
+        --muted: #333;
+        --sidenote: #333;
+        --accent: #000;
+        --rule: #999;
+        --callout-bg: transparent;
+        --bar-baseline: #666;
+      }
       body {
         display: block;
         background: #fff;
@@ -406,10 +448,10 @@
         padding: 0;
         max-width: none;
       }
-      .toc, .skip, .fig-full { display: none; }
+      .toc, .skip, .fig-full, .copy-bib, .copy-status { display: none; }
       article { max-width: none; }
       a { color: #000; text-decoration: none; }
-      .findings, .bib { background: transparent; }
+      .bib { background: transparent; }
       .sidenote {
         position: static;
         width: auto;
@@ -421,7 +463,6 @@
       }
       h2 { page-break-after: avoid; }
       figure, table, .cite { page-break-inside: avoid; }
-      figure img { filter: none; }
     }
   </style>
 </head>
@@ -431,227 +472,335 @@
     <ol>
       <li><a href="#abstract">Abstract</a></li>
       <li><a href="#introduction">1. Introduction</a></li>
-      <li><a href="#data">2. Data</a></li>
-      <li><a href="#methodology">3. Methodology</a></li>
-      <li><a href="#results">4. Results</a></li>
-      <li><a href="#limitations">5. Limitations</a></li>
-      <li><a href="#recommendations">6. Recommendations</a></li>
-      <li><a href="#reproducibility">7. Reproducibility</a></li>
-      <li><a href="#acknowledgments">8. Acknowledgments</a></li>
+      <li><a href="#related">2. Related work</a></li>
+      <li><a href="#data">3. Data</a></li>
+      <li><a href="#methodology">4. Methodology</a></li>
+      <li><a href="#results">5. Results</a></li>
+      <li><a href="#limitations">6. Limitations</a></li>
+      <li><a href="#playbook">7. Playbook</a></li>
+      <li><a href="#next">8. What I would do next</a></li>
+      <li><a href="#reproducibility">9. Reproducibility</a></li>
+      <li><a href="#appendix">Appendix</a></li>
+      <li><a href="#acknowledgments">Acknowledgments</a></li>
     </ol>
   </nav>
 
+  <main>
   <article>
     <header class="masthead">
-      <h1>Ranking Pages for Content Refresh: An Honest Baseline, a Leaky Model, and a Prioritisation Playbook</h1>
+      <h1>Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation</h1>
       <p class="byline">Junaid Ahamed</p>
       <p class="affiliation">FlyRank ML Internship · October 2026</p>
       <p class="github-link"><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning">View source on GitHub</a></p>
-      <p class="metadata">8 min read · 1,388 words · 5 October 2026</p>
+      <p class="metadata" id="reading-meta">14 min read · 3,261 words · 5 October 2026</p>
       <hr>
     </header>
 
     <div class="abstract" id="abstract" role="doc-abstract">
       <p class="abstract-label">Abstract</p>
       <div class="abstract-body">
-        <p>Given a limited weekly content-refresh budget, which pages should an editor refresh first when organic impressions are falling? On a pseudonymized March 2026 panel from the FlyRank internship warehouse (37,385 in-scope pages, decision date 2026-03-31), we ranked pages by decline probability using four post-leakage-fix features and compared a Random Forest to a CTR-headroom rule baseline. Validation combined a single client holdout, leave-one-client-out folds, and a February-to-March time split, with explicit leakage checks that excluded prior-impression transforms tied to the label. The single holdout measured P@50 = 0.38 for the model versus 0.24 for the same-split baseline, while the time-aware check measured 0.44 on the full March frame—both optimistic relative to grouped generalization. The honest generalization read is LOO-client P@50 = 0.258 ± 0.237 (seven folds at 0.0), a directional decision-support lift over the LOO baseline mean of 0.17, not proof that refresh will recover traffic.</p>
+        <p>Editors can refresh only a short list of pages in a week, and they need an order for that list when impressions are falling. I ranked 37,385 pseudonymized pages from a March 2026 slice of the FlyRank internship warehouse, with a random forest on four features and a CTR-headroom rule as the baseline. The label is a drop of more than 20% from the prior 30 days to the most recent 30 days, and the traffic features are measured inside that recent window, so the score flags pages that are already declining. On the saved leave-one-client-out audit, Precision@50 is <strong>0.26 ± 0.24</strong> (about 12.9 declining pages in a list of 50, against about 10.5 at the 0.21 base rate). A refit of the 28 client folds put the gap over the baseline at 0.08, with a bootstrap 95% interval of 0.03 to 0.14, and seven folds still score 0.</p>
       </div>
     </div>
 
-    <aside class="findings" aria-label="Key findings">
-      <p class="kicker">Key findings</p>
-      <ul>
-        <li>The honest generalization read is LOO-client P@50 = 0.258 ± 0.237 (seven folds at 0.0), a directional decision-support lift over the LOO baseline mean of 0.17, not proof that refresh will recover traffic.</li>
-        <li><code>log_imp_prev30</code> was removed: it is a monotone transform of <code>imp_prev30</code>, which enters the label. With it included, holdout P@50 approached <strong>1.00</strong>; with four honest features, the same split measured <strong>0.38</strong> in the w06 audit re-run.</li>
-        <li><strong>Client heterogeneity:</strong> LOO-client P@50 standard deviation is 0.237 with seven folds at 0.0—measured queue value is uneven across clients.</li>
-      </ul>
-    </aside>
-
     <section id="introduction">
-      <h2>1. Introduction / Problem statement</h2>
-      <p>Content teams operate under a fixed weekly refresh budget. When impressions soften, the operational question is not “is this page declining?” in isolation—it is <em>which</em> declining or at-risk URLs deserve scarce editor hours first. A flat classifier can be accurate on average while still mis-ordering the queue, wasting capacity on low-upside pages and leaving high-exposure URLs unattended.</p>
-      <p>This paper studies refresh prioritisation on a real production search panel: page-level Google Search Console aggregates joined to content metadata, pseudonymized at client and URL granularity. The cost of a wrong call is measured in editor time (false positives) and uncaptured demand (false negatives on high-impression URLs).</p>
-      <p>We contribute an audited ranking pipeline—honest features after a leakage catch, a transparent rule baseline, grouped validation, and a human-reviewed action playbook. Claims are framed as <strong>decision-support</strong> for triage, not automation or causal recovery promises.</p>
-      <p>At FlyRank’s clients, content teams face the same constraint at portfolio scale: hundreds or thousands of tracked URLs, but only a fixed number of editor hours each week. This paper’s case study is a March 2026 evaluation slice from the FlyRank internship warehouse—page-level production search aggregates, pseudonymized but real. The practical read of the ranked queue audited here is workload ordering: it changes <em>which</em> pages an editor reviews first, not how many refreshes the team can execute in a week.</p>
+      <h2>1. Introduction</h2>
+      <p>A content team can refresh only so many URLs in a week. When impressions fall, the question is which pages to open first. A model can look accurate on average and still fill the top of the queue with the wrong URLs.</p>
+      <p>I studied that ordering on page-level Google Search Console aggregates from FlyRank clients, joined to content metadata. Clients and URLs are pseudonymized. A false positive spends editor time. A miss leaves a high-impression URL out of the week's work.</p>
+      <p>What follows is the leakage audit, the rule I compared against, the client-level checks, and a playbook I have not tested against later traffic.</p>
+    </section>
+
+    <section id="related">
+      <h2>2. Related work</h2>
+      <p>Two lines of work sit behind this page. The first is target leakage. Kaufman, Rosset, Perlich, and Stitelman describe leakage as the use of information about the target that would not legitimately be available for the decision you claim to support, and they tell the modeler to check each column against that decision <a href="#ref-kaufman">[1]</a>. That check is what removed <code>log_imp_prev30</code>.</p>
+      <p>The second is how to score a ranked list. Precision at k is the share of relevant items in the first k positions. Manning, Raghavan, and Schütze present it for a reader who only looks at the top of a list, and they note that it is unstable when the lists being averaged contain different numbers of relevant items <a href="#ref-manning">[2]</a>. Järvelin and Kekäläinen argue that a single cutoff ignores how gains are arranged down the list, which is why they introduced cumulated gain <a href="#ref-jarvelin">[3]</a>. I still use Precision@50, because the decision is a short review queue, and I report it separately for each evaluation list.</p>
+      <p>On the editorial side, Google's Search Central guidance asks publishers to write helpful pages for people, and it treats large additions or removals made mainly to look fresh as a warning sign <a href="#ref-helpful">[4]</a>. A crawling note makes a narrower point: update a page when the page needs an update, and a trivial edit with a new date does not add ranking value <a href="#ref-crawl">[5]</a>. I use those documents as the practice context. The score here is about which pages already show a drop in impressions.</p>
     </section>
 
     <section id="data">
-      <h2>2. Data</h2>
-      <p><strong>Release:</strong> <code>FlyRank/internship-warehouse</code> on Hugging Face. <strong>Tables:</strong> <code>fact_content_daily_performance</code> and <code>dim_content</code>. <strong>Development month:</strong> <code>month=2026-03</code> with decision date <strong>2026-03-31</strong> (37,385 page-level rows after contract filters). January–February partitions supply prior-window impression legs only.</p>
-      <p><strong>Excluded:</strong> <code>fact_content_daily_performance_sample</code> (June 2026 terminal month—sealed outcome window; confirmed present but never used for features, labels, or training). Rows without reliable GSC coverage (<code>gsc_data_available IS NOT TRUE</code>) are dropped. Trend fields used in the label are not fed as model inputs.</p>
-      <p><strong>Public safety:</strong> All rows use hashed client and content identifiers. This paper and its notebooks contain no client names, live URLs, or private search queries.</p>
+      <h2>3. Data</h2>
+      <p>The rows come from the Hugging Face dataset <a href="https://huggingface.co/datasets/FlyRank/internship-warehouse"><code>FlyRank/internship-warehouse</code></a>, tables <code>fact_content_daily_performance</code> and <code>dim_content</code>. I used the March 2026 partition, with January and February read only to fill the earlier impression window. The numbers in this page are from that warehouse slice. They are not from the small CSV shipped in the repository.</p>
+      <p>For the March slice the recent window is 2 March through 31 March 2026. The prior window is 31 January through 1 March 2026.<a class="sn-ref" href="#sn-windows" id="ref-windows"><sup>1</sup></a><span class="sidenote" id="sn-windows">1. The query keeps a recent-window day when <code>report_date &gt; 31 March 2026 minus 30 days</code>, and a prior-window day when <code>report_date &gt; 31 March 2026 minus 60 days</code> and <code>report_date &lt;= 31 March 2026 minus 30 days</code>.</span> <code>imp_last30</code>, <code>avg_pos_last30</code>, and <code>ctr_last30</code> are computed on the recent window. The label compares the recent window with the prior window. <code>content_age_days</code> is the page's age on 31 March 2026 and does not use impressions. The traffic features therefore sit inside the label's recent leg. This is a nowcast of pages whose impressions are already down, with the window ending on 31 March 2026.</p>
+      <p>After those windows I kept 37,385 pages. A page stays in only if it has recent impressions, <code>gsc_data_available</code> is true on every daily row loaded for it through 31 March 2026, <code>content_created_date</code> is on or before that day, and the page is at least 90 days old. The slice base rate of the decline label is 0.21. I did not use <code>fact_content_daily_performance_sample</code>. That table is the June 2026 partition. The data-contract notebook counts it (11,694,072 rows) and leaves it unused, because June is the panel's last month and the natural outcome window of a past-to-future label.</p>
+      <p>Every row uses a hashed client id and a hashed content id. This page has no client names, live URLs, or search queries.</p>
     </section>
 
     <section id="methodology">
-      <h2>3. Methodology</h2>
-      <h3>Label definition</h3>
-      <p>Decline label: last-30-day impressions fell more than 20% versus the prior 30 days when the prior window had positive volume (<code>trend_direction = down</code>). Slice base decline rate ≈ 0.21.</p>
-      <h3>Features (honest four)</h3>
-      <p><code>imp_last30</code>, <code>avg_pos_last30</code>, <code>ctr_last30</code>, <code>content_age_days</code>. Model: Random Forest (balanced subsample, depth 10, 200 trees, <code>random_state=42</code>).</p>
-      <h3>Leakage fix</h3>
-      <p><code>log_imp_prev30</code> was removed: it is a monotone transform of <code>imp_prev30</code>, which enters the label. With it included, holdout P@50 approached <strong>1.00</strong>; with four honest features, the same split measured <strong>0.38</strong> in the w06 audit re-run.</p>
+      <h2>4. Methodology</h2>
+      <h3>Label and features</h3>
+      <p>A page is labeled declining when prior-window impressions are positive and recent impressions fell by more than 20%: <code>(imp_last30 − imp_prev30) / imp_prev30 &lt; −0.20</code>. The forest sees four columns: <code>imp_last30</code>, <code>avg_pos_last30</code>, <code>ctr_last30</code>, and <code>content_age_days</code>. CTR is clicks divided by impressions in the recent window, times 100, so a value of 0.76 means 0.76%.</p>
+      <h3>The leakage audit</h3>
+      <p>On the six-client holdout, a forest that still included <code>log_imp_prev30</code> scored Precision@50 of 1.00. Every page in that top 50 carried the decline label. The column is <code>log(1 + imp_prev30)</code>, a monotone transform of the prior-window impressions. Those prior impressions enter the label, and <code>imp_last30</code> was already a feature, so the two impression columns were enough to rebuild the comparison. I had already kept <code>trend_pct</code> and <code>trend_direction</code> out of the features for the same reason. I dropped <code>log_imp_prev30</code> and fit the holdout again. On the audit re-run, Precision@50 was 0.38.</p>
       <h3>Baseline</h3>
-      <p>w04 CTR-headroom rule: rank by <code>impressions_90d × max(0, tier_median_ctr − ctr_last30) × tier_weight</code> (position-tier weights from w04). Evaluated with the same Precision@50 ranking metric as the model.</p>
-      <h3>Validation design</h3>
-      <ul>
-        <li><strong>Single client holdout (~22 train / 6 test clients):</strong> w05 design, reproduced in w06.</li>
-        <li><strong>Leave-one-client-out (LOO):</strong> train on 27 clients, rank within held-out client pages; report mean ± std P@50 (headline).</li>
-        <li><strong>Time-aware:</strong> train on February decision slice, score all March pages.</li>
-      </ul>
-      <h3>Leakage checks</h3>
-      <p>w03 trend-feature demo; w05 <code>log_imp_prev30</code> ablation; w06 full re-run with baseline recomputed on each split.</p>
+      <p>The baseline ranks pages by 90-day impressions, times how far recent CTR sits below the median CTR of the page's position tier (floored at zero), times a tier weight. The weights are 1 for positions 1–3, 0.9 for 4–10, 0.85 for 11–20, 0.7 for 21–50, 0.5 deeper than that, and 0 when position is missing. I score it with the same Precision@50 rule as the forest.</p>
+      <h3>Validation</h3>
+      <p>I used three checks. A single holdout keeps about 20% of clients out of training (6 of 28, seed 42) and ranks the pooled holdout pages. Leave-one-client-out trains on the other 27 clients and ranks inside the held-out client. The time check fits on the February window, ending 28 February 2026, and ranks every March page. The model is a random forest with balanced subsample weights, depth 10, 200 trees, at least 25 samples per leaf, and <code>random_state=42</code>.</p>
+      <h3>What I tried</h3>
+      <p>I chose the forest because the model notebook treats position and CTR as an interaction a linear score can miss, and because the forest gives permutation importance on the holdout. Depth 10 was fixed in that code. I did not find a search over depth. On the same client holdout, the executed model table also records logistic regression at Precision@50 of 0.36, next to 0.34 for the forest. Gradient boosting was written to train only if the forest beat logistic regression by at least 0.03 on that split. The saved flag says it did not run. The 0.34 and the audit's 0.38 are different executions of the forest. The results table uses the audit.</p>
     </section>
 
     <section id="results">
-      <h2>4. Results</h2>
-      <table>
-        <thead>
-          <tr><th>Regime</th><th class="num">P@50</th><th>Notes</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>In-sample (w05 reference)</td><td class="num">0.92</td><td>Calibration only—not for claims</td></tr>
-          <tr><td>w05 single client-holdout (22/6)</td><td class="num">0.38</td><td>Optimistic vs LOO</td></tr>
-          <tr><td>Leave-one-client-out (mean ± std)</td><td class="num"><strong>0.258 ± 0.237</strong></td><td>P@50 within each client; 7 folds at 0.0</td></tr>
-          <tr><td>Time-aware (train Feb, test Mar)</td><td class="num">0.44</td><td>Full March ranking frame</td></tr>
-          <tr><td>w04 baseline (full slice)</td><td class="num">0.34</td><td>Reference only</td></tr>
-          <tr><td>w04 baseline (same split as w05 holdout)</td><td class="num">0.24</td><td>Apples-to-apples vs holdout RF</td></tr>
-          <tr><td>w04 baseline (LOO-client mean)</td><td class="num">0.17</td><td>Same LOO protocol as RF</td></tr>
-        </tbody>
-      </table>
+      <h2>5. Results</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Check</th><th class="num">Precision@50</th><th>How the list was cut</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Leave-one-client-out</td><td class="num">0.26 ± 0.24</td><td>Mean and population standard deviation across 28 clients. Ranked inside each client. Seven folds at 0.</td></tr>
+            <tr><td>Single holdout</td><td class="num">0.38</td><td>Top 50 of the six held-out clients, pooled. Baseline on the same pages: 0.24.</td></tr>
+            <tr><td>February to March</td><td class="num">0.44</td><td>Train on February, top 50 of all March pages. Baseline on that ranking: 0.34.</td></tr>
+            <tr><td>Baseline, full March slice</td><td class="num">0.34</td><td>Rule ranked on every in-scope page.</td></tr>
+            <tr><td>Baseline, leave-one-client-out</td><td class="num">0.17</td><td>Mean across the same 28 client folds.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A forest trained and scored on the full March slice reaches Precision@50 of 0.92. I use that only as a check that the model can fit this slice.</p>
+      <p>The three model numbers are different lists.<a class="sn-ref" href="#sn-k" id="ref-k"><sup>2</sup></a><span class="sidenote" id="sn-k">2. The scoring function averages the label over the first min(50, n) rows. When a client has fewer than 50 pages, both scores are the client's own decline rate, so they match.</span> Leave-one-client-out cuts the top 50 inside one client. The holdout cuts the top 50 of six clients pooled together. The February-to-March check cuts the top 50 of all 37,385 March pages. I report them separately.</p>
 
       <figure id="fig-1">
-        <img src="assets/model_vs_baseline.svg" alt="Grouped bar chart comparing Random Forest and the CTR-headroom baseline on Precision at 50 for leave-one-client-out, single holdout, and time-aware validation, with a dashed line at the 0.21 base rate">
-        <figcaption><strong>Figure 1.</strong> Random Forest (honest features) versus w04 CTR-headroom baseline across three validation regimes; dashed line = slice decline base rate (0.21). <a class="fig-full" href="assets/model_vs_baseline.svg">Full size<span class="sr"> of Figure 1</span> ↗</a></figcaption>
+        <img src="assets/model_vs_baseline.svg" alt="Grouped bars of Precision at 50 for the random forest and the CTR-headroom baseline on leave-one-client-out, the single holdout, and the February-to-March check, with a dashed line at the 0.21 base rate">
+        <figcaption>Figure 1. Saved audit receipt. The bars are those recorded means, not the refit below. The dashed line is the slice base rate, 0.21. <a class="fig-full" href="assets/model_vs_baseline.svg">Full size<span class="sr"> of Figure 1</span></a></figcaption>
       </figure>
 
-      <p>The model’s honest performance is <strong>LOO-client P@50 = 0.258 ± 0.237</strong>—a directional lift over the LOO baseline of <strong>0.17</strong>, not the strong lift the single holdout suggested (0.38 vs 0.24). Seven client folds scored 0.0 at P@50 (no declining pages in the client-level top 50), which drives the wide standard deviation. w05 prose once cited 0.40; that figure appears only as a historical audit reference—the executed w05 table and w06 re-run do not support it as a headline. See Figure 1.</p>
+      <p>The abstract's 0.26 ± 0.24 is that leave-one-client-out row: the mean across 28 client folds, with the population standard deviation. At the base rate of 0.21, about 10.5 pages in a list of 50 are declining. The saved mean of 0.26 corresponds to about 12.9. The baseline's leave-one-client-out mean, 0.17, is below the base rate.</p>
+      <p>The audit file stores the two means and not the 28 pairs, so I refit the same loop. The refit mean was 0.25 for the forest and 0.17 for the baseline, against 0.26 and 0.17 on the receipt, so I left the headline on the receipt. On the refit the mean gap was 0.08. A percentile bootstrap of that gap, 10,000 resamples of the 28 clients with seed 42, gave a 95% interval of 0.03 to 0.14, which stays above zero. The forest was higher on 11 of the 13 clients where the scores differed (Wilcoxon signed-rank p = 0.006).</p>
+      <p>The February slice has 26 clients and the March slice has 28. Twenty-four clients appear in both, and 33,802 of the 37,385 March pages (90%) also appear in February. The check asks whether a score fit in February still ranks March declines among pages I have mostly already seen. It is a stability check on this panel. I did not score the sealed June partition, so there is no final test on the panel's last month.</p>
+
+      <h3>The seven folds at zero</h3>
+      <p>The receipt records seven client folds at 0 and does not store the rows. On the refit, six of those folds have between 1 and 7 pages and no declining page. With fewer than 50 pages, Precision@50 is the decline rate of the whole client, so a client with no declines scores 0 whichever way the pages are ordered. The seventh fold has 63 pages and one declining page. The forest's top 50 missed it. The baseline's top 50 included it (Precision@50 of 0.02). Thirteen clients have 50 pages or fewer, and on every one of those folds the two scores tie.</p>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr">Seven refit folds with forest Precision@50 of 0</caption>
+          <thead>
+            <tr>
+              <th class="num">Pages</th>
+              <th class="num">Declining pages</th>
+              <th class="num">Median recent impressions</th>
+              <th class="num">Forest</th>
+              <th class="num">Baseline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="num">1</td><td class="num">0</td><td class="num">221</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td class="num">3</td><td class="num">0</td><td class="num">529</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td class="num">4</td><td class="num">0</td><td class="num">819</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td class="num">5</td><td class="num">0</td><td class="num">2,339</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td class="num">6</td><td class="num">0</td><td class="num">149</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td class="num">7</td><td class="num">0</td><td class="num">348</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td class="num">63</td><td class="num">1</td><td class="num">1,761</td><td class="num">0</td><td class="num">0.02</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure id="fig-2">
+        <img src="assets/loo_client_strip.svg" alt="Strip plot of Precision at 50 for 28 client folds, seven of them at zero, with a dashed line at the saved mean of 0.26">
+        <figcaption>Figure 2. Precision@50 on the refit, one point per client, ordered from low to high. Grey points are the seven zeros. The dashed line is the saved audit mean, 0.26. <a class="fig-full" href="assets/loo_client_strip.svg">Full size<span class="sr"> of Figure 2</span></a></figcaption>
+      </figure>
     </section>
 
     <section id="limitations">
-      <h2>5. Limitations &amp; honest framing</h2>
+      <h2>6. Limitations</h2>
       <ol>
-        <li><strong>Client heterogeneity:</strong> LOO-client P@50 standard deviation is 0.237 with seven folds at 0.0—measured queue value is uneven across clients.</li>
-        <li><strong>Observational label:</strong> Decline is GSC momentum, not post-refresh traffic recovery; findings are decision-support, not causal.</li>
-        <li><strong>Single primary month:</strong> Features and labels are anchored on <code>month=2026-03</code>; Feb→Mar is one time check, not a full backtest.</li>
-        <li><strong>Holdout optimism:</strong> Single holdout P@50 (0.38) exceeds LOO mean (0.258); public claims must use LOO.</li>
-        <li><strong>Precision at fixed K:</strong> At LOO P@50 ≈ 0.26 and base rate ≈ 0.21, expect roughly thirteen true declines per client-level top-50 batch and substantial false positives—editorial cost matters.</li>
-        <li><strong>Playbook layer:</strong> Archetypes and reason codes translate ranks into editorial verbs; they were not separately validated as outcome predictors.<a class="sn-ref" href="#sn-population"><sup>7</sup></a></li>
+        <li>The traffic features use the same days as the recent leg of the label. The score describes a decline that is already in the window. I did not test a later outcome.</li>
+        <li>The leave-one-client-out mean hides a wide client spread, including seven folds at 0. Section 5 shows what those folds contain on the refit.</li>
+        <li>The label is impression momentum in Search Console. I do not observe traffic after a refresh.</li>
+        <li>The February-to-March check mostly reuses this panel's pages. June 2026 was left sealed, so the last month of the panel is untested.</li>
+        <li>Precision@50 from the client folds, the six-client pool, and the full March ranking are different lists. The paired interval in Section 5 is from a refit that did not reproduce the saved means exactly.</li>
+        <li>The playbook in the next section was not checked against later outcomes.</li>
       </ol>
-      <aside class="sidenote" id="sn-population"><strong>Population filter:</strong> GSC coverage and exposure filters define the contract; results apply to that in-scope population only.</aside>
     </section>
 
-    <section id="recommendations">
-      <h2>6. Ranked recommendations</h2>
-      <p>The w07 playbook maps each page to an archetype, reason code, and action for <strong>human review</strong>. The model orders decline probability; actions below are triage guidance, not automated publishing.</p>
-      <table>
-        <thead>
-          <tr><th>Archetype</th><th>Signature (summary)</th><th>Action</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>HIGH_LEVERAGE_REFRESH</code></td><td>Page-one/striking tier, CTR below tier median, high exposure (≥ p75)</td><td>Refresh content</td></tr>
-          <tr><td><code>SNIPPET_OPTIMIZATION</code></td><td>Top-3 tier, CTR below tier median, high exposure</td><td>CTR/snippet fix, not a rewrite</td></tr>
-          <tr><td><code>UNDEREXPOSED_DECLINE</code></td><td>Deep/page_3_5, trend down, below-median exposure</td><td>Deprioritise — no refresh this cycle</td></tr>
-          <tr><td><code>STABLE_HIGH_PERFORMER</code></td><td>Top-3 or strong CTR in page-one/striking</td><td>Protect — do not touch</td></tr>
-          <tr><td><code>CONTENT_AGING</code></td><td>High exposure, age &gt; 365d, CTR near tier median</td><td>Refresh on next cycle</td></tr>
-          <tr><td><code>NEW_OR_UNCLEAR</code></td><td><code>no_data</code> tier or new/flat trend</td><td>Manual triage — no model action</td></tr>
-          <tr><td><code>LOW_SIGNAL</code></td><td><code>impressions_90d</code> &lt; 100</td><td>No action</td></tr>
-        </tbody>
-      </table>
+    <section id="playbook">
+      <h2>7. An unvalidated playbook</h2>
+      <p>This section is a proposal for turning a rank into an editorial verb. I did not test whether following the verb changes later impressions. The rules below are the ones in the playbook notebook. The forest orders pages. A person still decides.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Archetype</th><th>Rule, in short</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>HIGH_LEVERAGE_REFRESH</code></td><td>Page-one or striking tier, CTR below the tier median. One branch also requires 90-day impressions at or above the 75th percentile.</td><td>Refresh content</td></tr>
+            <tr><td><code>SNIPPET_OPTIMIZATION</code></td><td>Top-three tier, CTR below the tier median. The high-exposure branch also requires the 75th percentile.</td><td>CTR/snippet fix, not a rewrite</td></tr>
+            <tr><td><code>UNDEREXPOSED_DECLINE</code></td><td>Deep or positions 21–50. The narrow branch also requires a decline and below-median exposure.</td><td>Deprioritise this cycle</td></tr>
+            <tr><td><code>STABLE_HIGH_PERFORMER</code></td><td>Top-three, or page-one/striking, with CTR at or above the tier median.</td><td>Protect</td></tr>
+            <tr><td><code>CONTENT_AGING</code></td><td>High exposure, age over 365 days, CTR within 0.05 of the tier median.</td><td>Refresh on the next cycle</td></tr>
+            <tr><td><code>NEW_OR_UNCLEAR</code></td><td>Missing position, or a new or flat trend.</td><td>Manual triage</td></tr>
+            <tr><td><code>LOW_SIGNAL</code></td><td>90-day impressions under 100.</td><td>No action</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Each archetype carries one reason code from this list: <code>HIGH_LEVERAGE_REFRESH</code>, <code>SNIPPET_CTR_HEADROOM</code>, <code>UNDEREXPOSED_DECLINE</code>, <code>STABLE_PERFORMER_PROTECT</code>, <code>CONTENT_AGING_CYCLE</code>, <code>MANUAL_TRIAGE_UNCLEAR</code>, <code>BELOW_EXPOSURE_FLOOR</code>, <code>INSUFFICIENT_DATA</code>. The proposal's review rules are: look at the top five pages of each client before a refresh, triage <code>NEW_OR_UNCLEAR</code> and <code>LOW_SIGNAL</code> by hand, still look at any page with at least 50,000 impressions over 90 days, and let the editor override the rank.</p>
+      <p>One March page, <code>content_7bf497ea6afc9f34</code>, shows the path. Recent impressions were 734, average position 7.50, CTR 0, age 244 days, and 90-day impressions 2,758. The prior window had 1,234 impressions, a drop of about 40%, so the label is declining. A forest fit on the full March slice, the same kind of fit as the 0.92 check, scored it 0.581. CTR is below the page-one median (0.21). The rules mark it <code>HIGH_LEVERAGE_REFRESH</code>, reason code <code>HIGH_LEVERAGE_REFRESH</code>, action "Refresh content". Its 90-day impressions sit under the slice 75th percentile (12,168), so it takes the broader branch of that rule. This score is from the full-slice fit, not from a client held out of training.</p>
 
-      <p><strong>Reason codes (fixed vocabulary):</strong> <code>HIGH_LEVERAGE_REFRESH</code>, <code>SNIPPET_CTR_HEADROOM</code>, <code>UNDEREXPOSED_DECLINE</code>, <code>STABLE_PERFORMER_PROTECT</code>, <code>CONTENT_AGING_CYCLE</code>, <code>MANUAL_TRIAGE_UNCLEAR</code>, <code>BELOW_EXPOSURE_FLOOR</code>, <code>INSUFFICIENT_DATA</code>.</p>
-
-      <p><strong>Human-review rules:</strong> Review the top 5 pages per <code>client_hash_id</code> before any refresh; manually triage <code>NEW_OR_UNCLEAR</code> and <code>LOW_SIGNAL</code>; review any page with <code>impressions_90d</code> ≥ 50,000 even if ranked below top 50; require a <code>reason_code</code> in UI; editor decision overrides model rank. See Figure 2 and Figure 3.</p>
-
-      <figure id="fig-2">
-        <img src="assets/archetype_mix.svg" alt="Horizontal bar chart of archetype counts on the March 2026 slice, sorted from most to fewest pages">
-        <figcaption><strong>Figure 2.</strong> Archetype mix across the March 2026 analysis slice (37,385 pages). <a class="fig-full" href="assets/archetype_mix.svg">Full size<span class="sr"> of Figure 2</span> ↗</a></figcaption>
-      </figure>
       <figure id="fig-3">
-        <img src="assets/action_distribution.svg" alt="Horizontal bar chart of recommended editorial actions, sorted from most to fewest pages">
-        <figcaption><strong>Figure 3.</strong> Distribution of playbook actions after archetype assignment. <a class="fig-full" href="assets/action_distribution.svg">Full size<span class="sr"> of Figure 3</span> ↗</a></figcaption>
+        <img src="assets/archetype_mix.svg" alt="Horizontal bars of page counts for seven archetypes, each labeled with its editorial action">
+        <figcaption>Figure 3. Archetype mix on the March slice (37,385 pages). Each archetype maps to one action, and the action counts match these bars, so this chart replaces a separate action chart. <a class="fig-full" href="assets/archetype_mix.svg">Full size<span class="sr"> of Figure 3</span></a></figcaption>
       </figure>
+    </section>
+
+    <section id="next">
+      <h2>8. What I would do next</h2>
+      <p>I would move the features off the label's recent window, so the score is aimed at a later decline. I would save the per-client Precision@50 pairs with the audit receipt. This refit did not match the saved means, and the interval should be recomputed from the original folds if those scores can be recovered. I would keep June sealed until that split is clean, and then use it once. I would compare tree depth, and logistic regression, on the client folds. I did neither. I would not treat the playbook verbs as measured until I can see what happened to pages after a refresh.</p>
     </section>
 
     <section id="reproducibility">
-      <h2>7. Reproducibility</h2>
-      <ul>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w01_research_question.ipynb">w01 — research question</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w02_ml_task_framing.ipynb">w02 — ML task framing</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w03_data_contract.ipynb">w03 — data contract</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w04_baseline_score.ipynb">w04 — baseline score</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w05_model.ipynb">w05 — model</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w06_validation_audit.ipynb">w06 — validation audit</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w07_action_playbook.ipynb">w07 — action playbook</a></li>
-        <li><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/capstone.ipynb">capstone — paper mirror + figure export</a></li>
-        <li>Metrics: <a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/outputs/w05_model_metrics.json">w05_model_metrics.json</a>, <a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/outputs/w06_audit_metrics.json">w06_audit_metrics.json</a>, <a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/outputs/w07_playbook_metrics.json">w07_playbook_metrics.json</a></li>
-        <li>Figures: <a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/tree/main/work/figures">work/figures/</a></li>
-      </ul>
+      <h2>9. Reproducibility</h2>
+      <p>Notebooks and the metric receipts were checked against commit <code>671937d7bd73071f388c5c0f82e0d7fb41caa1e5</code>. The paired-comparison script was added after that commit. Install the Python packages in <code>requirements.txt</code>. The warehouse notebooks need a Hugging Face token in the environment variable <code>HF_TOKEN</code>, or in the gitignored file <code>work/.hf_token_local</code>. Do not commit the token.</p>
+      <p>Run the notebooks in this order: research question, task framing, data contract, feature leakage check, signal audit, baseline, model, leakage audit, playbook, then the capstone mirror. The files this page reads are <code>work/outputs/baseline_metrics.json</code>, <code>w05_model_metrics.json</code>, <code>w06_audit_metrics.json</code>, and <code>w07_playbook_metrics.json</code>. The refit is <code>python work/scripts/loo_paired_comparison.py</code>, which writes <code>work/outputs/loo_paired_comparison.json</code>. I ran that refit with scikit-learn 1.9.1. Figures are rebuilt with <code>python work/scripts/build_paper_figures.py</code>.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name on this page</th><th>Notebook</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Data contract</td><td><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/671937d7bd73071f388c5c0f82e0d7fb41caa1e5/work/notebooks/w03_data_contract.ipynb"><code>w03_data_contract.ipynb</code></a></td></tr>
+            <tr><td>Baseline</td><td><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/671937d7bd73071f388c5c0f82e0d7fb41caa1e5/work/notebooks/w04_baseline_score.ipynb"><code>w04_baseline_score.ipynb</code></a></td></tr>
+            <tr><td>Model</td><td><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/671937d7bd73071f388c5c0f82e0d7fb41caa1e5/work/notebooks/w05_model.ipynb"><code>w05_model.ipynb</code></a></td></tr>
+            <tr><td>Leakage audit</td><td><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/671937d7bd73071f388c5c0f82e0d7fb41caa1e5/work/notebooks/w06_validation_audit.ipynb"><code>w06_validation_audit.ipynb</code></a></td></tr>
+            <tr><td>Playbook</td><td><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/671937d7bd73071f388c5c0f82e0d7fb41caa1e5/work/notebooks/w07_action_playbook.ipynb"><code>w07_action_playbook.ipynb</code></a></td></tr>
+            <tr><td>Paper mirror</td><td><a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/671937d7bd73071f388c5c0f82e0d7fb41caa1e5/work/notebooks/capstone.ipynb"><code>capstone.ipynb</code></a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The code is under the MIT license in <code>LICENSE</code>. The text of this page and the figures are under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. The bundled CSV is covered by <code>DATA_USE.md</code>, not by either of those licenses.</p>
+    </section>
+
+    <section id="appendix">
+      <h2>Appendix: unrounded figures</h2>
+      <p>Prose above uses two decimals. Three decimals, and the refit, are here. Full values are in the JSON files.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Quantity</th><th class="num">Value</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Leave-one-client-out mean</td><td class="num">0.258</td><td>Audit receipt</td></tr>
+            <tr><td>Leave-one-client-out standard deviation</td><td class="num">0.237</td><td>Audit receipt, population sd</td></tr>
+            <tr><td>Baseline leave-one-client-out mean</td><td class="num">0.173</td><td>Audit receipt</td></tr>
+            <tr><td>Base rate</td><td class="num">0.210</td><td>March slice</td></tr>
+            <tr><td>Declines per 50 at the base rate</td><td class="num">10.490</td><td>Unrounded base rate × 50</td></tr>
+            <tr><td>Declines per 50 at the saved mean</td><td class="num">12.922</td><td>Unrounded leave-one-client-out mean × 50</td></tr>
+            <tr><td>Refit forest mean</td><td class="num">0.253</td><td>Paired-comparison file</td></tr>
+            <tr><td>Refit forest standard deviation</td><td class="num">0.230</td><td>Paired-comparison file</td></tr>
+            <tr><td>Refit baseline mean</td><td class="num">0.174</td><td>Paired-comparison file</td></tr>
+            <tr><td>Refit mean gap</td><td class="num">0.079</td><td>Forest minus baseline</td></tr>
+            <tr><td>Bootstrap 95% interval</td><td class="num">0.028 to 0.144</td><td>10,000 resamples, seed 42</td></tr>
+            <tr><td>Wilcoxon p-value</td><td class="num">0.006</td><td>13 untied clients</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section class="cite" aria-labelledby="cite-heading">
       <h2 id="cite-heading">How to cite</h2>
-      <p class="cite-apa">Ahamed, J. (2026). <em>Ranking Pages for Content Refresh: An Honest Baseline, a Leaky Model, and a Prioritisation Playbook.</em> FlyRank ML Internship.</p>
-      <p>Copy BibTeX</p>
-      <pre class="bib">@misc{ahamed2026ranking,
+      <p class="cite-apa">Ahamed, J. (2026). <em>Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation.</em> FlyRank ML Internship.</p>
+      <button type="button" class="copy-bib" id="copy-bibtex">Copy BibTeX</button>
+      <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+      <pre class="bib" id="bibtex">@misc{ahamed2026ranking,
   author       = {Ahamed, Junaid},
-  title        = {Ranking Pages for Content Refresh: An Honest Baseline, a Leaky Model, and a Prioritisation Playbook},
+  title        = {Ranking Pages for Content Refresh: Leakage Audit and Grouped Validation},
   year         = {2026},
   howpublished = {FlyRank ML Internship},
   url          = {https://junaidahamed-7777.github.io/flyrank-machine-learning/}
 }</pre>
     </section>
 
+    <section id="references">
+      <h2>References</h2>
+      <ol>
+        <li id="ref-kaufman">Kaufman, S., Rosset, S., Perlich, C., &amp; Stitelman, O. (2012). Leakage in data mining: Formulation, detection, and avoidance. <em>ACM Transactions on Knowledge Discovery from Data, 6</em>(4), Article 15. <a href="https://doi.org/10.1145/2382577.2382579">https://doi.org/10.1145/2382577.2382579</a></li>
+        <li id="ref-manning">Manning, C. D., Raghavan, P., &amp; Schütze, H. (2008). <em>Introduction to information retrieval.</em> Cambridge University Press. <a href="https://nlp.stanford.edu/IR-book/">https://nlp.stanford.edu/IR-book/</a></li>
+        <li id="ref-jarvelin">Järvelin, K., &amp; Kekäläinen, J. (2002). Cumulated gain-based evaluation of IR techniques. <em>ACM Transactions on Information Systems, 20</em>(4), 422–446. <a href="https://doi.org/10.1145/582415.582418">https://doi.org/10.1145/582415.582418</a></li>
+        <li id="ref-helpful">Google. (n.d.). <em>Creating helpful, reliable, people-first content.</em> Google Search Central. <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">https://developers.google.com/search/docs/fundamentals/creating-helpful-content</a></li>
+        <li id="ref-crawl">Google. (n.d.). <em>Myths and facts about crawling.</em> Google Crawling Infrastructure. <a href="https://developers.google.com/crawling/docs/myths-about-crawling">https://developers.google.com/crawling/docs/myths-about-crawling</a></li>
+      </ol>
+    </section>
+
     <section id="acknowledgments">
-      <h2>8. Acknowledgments &amp; data credit</h2>
-      <p>Built on the <a href="https://flyrank.ai">FlyRank ML Internship dataset</a>.</p>
+      <h2>Acknowledgments</h2>
+      <p>I built this during the FlyRank ML internship. The page-level aggregates are from the Hugging Face dataset <a href="https://huggingface.co/datasets/FlyRank/internship-warehouse"><code>FlyRank/internship-warehouse</code></a>. <a href="https://flyrank.ai">FlyRank</a> is the organisation.</p>
+      <p>[AUTHOR TO CONFIRM: describe how AI tools were used]</p>
     </section>
 
     <footer class="colophon">
       <p>Last updated: 5 October 2026</p>
-      <p>Text and figures released under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
-      <p class="credit">Built on the <a href="https://flyrank.ai">FlyRank ML Internship dataset</a>.</p>
+      <p>Text and figures: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: <a href="https://github.com/JunaidAhamed-7777/flyrank-machine-learning/blob/main/LICENSE">MIT</a>.</p>
     </footer>
   </article>
+  </main>
 
-  <style>
-    .sr {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-  </style>
   <script>
     (function () {
       var links = document.querySelectorAll(".toc a");
-      if (!links.length || !("IntersectionObserver" in window)) return;
-      var byId = {};
-      links.forEach(function (a) {
-        var id = (a.getAttribute("href") || "").replace("#", "");
-        if (id) byId[id] = a;
-      });
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          links.forEach(function (a) {
-            a.classList.remove("is-active");
-            a.removeAttribute("aria-current");
-          });
-          var active = byId[entry.target.id];
-          if (active) {
-            active.classList.add("is-active");
-            active.setAttribute("aria-current", "location");
-          }
+      if (links.length && ("IntersectionObserver" in window)) {
+        var byId = {};
+        links.forEach(function (a) {
+          var id = (a.getAttribute("href") || "").replace("#", "");
+          if (id) byId[id] = a;
         });
-      }, { rootMargin: "-15% 0px -75% 0px", threshold: 0 });
-      Object.keys(byId).forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) observer.observe(el);
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            links.forEach(function (a) {
+              a.classList.remove("is-active");
+              a.removeAttribute("aria-current");
+            });
+            var active = byId[entry.target.id];
+            if (active) {
+              active.classList.add("is-active");
+              active.setAttribute("aria-current", "location");
+            }
+          });
+        }, { rootMargin: "-15% 0px -75% 0px", threshold: 0 });
+        Object.keys(byId).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) observer.observe(el);
+        });
+      }
+
+      var button = document.getElementById("copy-bibtex");
+      var source = document.getElementById("bibtex");
+      var status = document.getElementById("copy-status");
+      if (!button || !source || !status) return;
+      function setStatus(message) {
+        status.textContent = message;
+      }
+      function selectBib() {
+        var range = document.createRange();
+        range.selectNodeContents(source);
+        var selection = window.getSelection();
+        if (!selection) return;
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      function fallbackCopy(text) {
+        selectBib();
+        var area = document.createElement("textarea");
+        area.value = text;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.left = "-999px";
+        document.body.appendChild(area);
+        area.select();
+        var ok = false;
+        try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+        document.body.removeChild(area);
+        if (!ok) selectBib();
+        return ok;
+      }
+      button.addEventListener("click", function () {
+        var text = source.textContent || "";
+        setStatus("");
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            setStatus("BibTeX copied.");
+          }).catch(function () {
+            setStatus(fallbackCopy(text) ? "BibTeX copied." : "Copy failed. Select the BibTeX and copy it manually.");
+          });
+          return;
+        }
+        setStatus(fallbackCopy(text) ? "BibTeX copied." : "Copy failed. Select the BibTeX and copy it manually.");
       });
     })();
   </script>

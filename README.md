@@ -57,6 +57,17 @@ already pre-filled with your repo and the right path.
 | 7 | ML-10 | `w07_action_playbook` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/w07_action_playbook.ipynb?flush_cache=true) |
 | 8 | ML-11 | `capstone` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JunaidAhamed-7777/flyrank-machine-learning/blob/main/work/notebooks/capstone.ipynb?flush_cache=true) |
 
+The research page uses plain names. The notebook filenames stay in the repo:
+
+| Name on the page | Notebook |
+|---|---|
+| Data contract | `work/notebooks/w03_data_contract.ipynb` |
+| Baseline | `work/notebooks/w04_baseline_score.ipynb` |
+| Model | `work/notebooks/w05_model.ipynb` |
+| Leakage audit | `work/notebooks/w06_validation_audit.ipynb` |
+| Playbook | `work/notebooks/w07_action_playbook.ipynb` |
+| Paper mirror | `work/notebooks/capstone.ipynb` |
+
 Badges not opening *your* copy? Colab's built-in opener always works: **File → Open notebook
 → GitHub tab** → paste `github.com/you/your-repo` → pick the notebook.
 
@@ -144,4 +155,4 @@ build on — and the `skills/` folder here is the instruction library for your A
 
 ---
 
-*Track leads: Mirza Ašćerić (ML) · Hole (data engineering). Code under MIT (see `LICENSE`); data under `DATA_USE.md`.*
+*Track leads: Mirza Ašćerić (ML) · Hole (data engineering). Code under MIT (see `LICENSE`). The research page text and figures are CC BY 4.0. The bundled dataset is under `DATA_USE.md`.*

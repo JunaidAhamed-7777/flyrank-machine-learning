@@ -22,6 +22,8 @@ SOFTWARE.
 
 ---
 
-NOTE: This MIT license covers the CODE in this repository only. The bundled
+NOTE: This MIT license covers the CODE in this repository only. The text and
+figures of the research page (docs/index.html and the figures under
+docs/assets/ and work/figures/) are released under CC BY 4.0. The bundled
 dataset (data/raw/content_refresh_anonymized.csv) is governed separately by
 DATA_USE.md. Read it before redistributing or publishing any data.

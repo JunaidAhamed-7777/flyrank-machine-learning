@@ -1,0 +1,426 @@
+{
+  "n_folds": 28,
+  "n_skipped": 0,
+  "loo_rf_mean": 0.25273088023088025,
+  "loo_rf_std_ddof0": 0.22973474619928885,
+  "loo_baseline_mean": 0.17415945165945163,
+  "n_zero_rf_folds": 7,
+  "matches_w06_receipt": false,
+  "w06_p50_loo_rf_mean": 0.258445165945166,
+  "w06_p50_loo_rf_std": 0.23664299012639262,
+  "w06_loo_baseline_mean": 0.17344516594516593,
+  "base_rate": 0.2097900227363916,
+  "expected_declines_per_50_at_base_rate": 10.48950113681958,
+  "expected_declines_per_50_at_loo_rf_mean": 12.636544011544013,
+  "expected_declines_per_50_at_loo_baseline_mean": 8.707972582972582,
+  "bootstrap": {
+    "n_bootstrap": 10000,
+    "seed": 42,
+    "method": "percentile bootstrap of the paired mean difference, resampling clients with replacement",
+    "mean_difference": 0.07857142857142856,
+    "ci95_low": 0.027857142857142855,
+    "ci95_high": 0.1442857142857143,
+    "ci_crosses_zero": false
+  },
+  "tests": {
+    "n_clients": 28,
+    "n_rf_greater": 11,
+    "n_baseline_greater": 2,
+    "n_tie": 15,
+    "wilcoxon_statistic": 6.5,
+    "wilcoxon_pvalue": 0.006387314042283314,
+    "wilcoxon_zero_method": "wilcox",
+    "wilcoxon_alternative": "two-sided",
+    "sign_test_pvalue": 0.0224609375
+  },
+  "feb_mar_overlap": {
+    "feb_rows": 43320,
+    "mar_rows": 37385,
+    "feb_clients": 26,
+    "mar_clients": 28,
+    "clients_in_both": 24,
+    "clients_only_march": 4,
+    "clients_only_february": 2,
+    "march_pages_also_in_february": 33802,
+    "march_page_overlap_share": 0.9041594222281664
+  },
+  "zero_folds": [
+    {
+      "client_id": "client_8ae2bfb5aa1ffa1e",
+      "n_pages": 1,
+      "n_declines": 0,
+      "median_imp_last30": 221.0,
+      "median_impressions_90d": 497.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 1
+    },
+    {
+      "client_id": "client_2094c6eb080311d5",
+      "n_pages": 3,
+      "n_declines": 0,
+      "median_imp_last30": 529.0,
+      "median_impressions_90d": 1448.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 3
+    },
+    {
+      "client_id": "client_08d2847f24cf89c1",
+      "n_pages": 4,
+      "n_declines": 0,
+      "median_imp_last30": 819.0,
+      "median_impressions_90d": 1624.5,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 4
+    },
+    {
+      "client_id": "client_400c21c81c8b46ef",
+      "n_pages": 5,
+      "n_declines": 0,
+      "median_imp_last30": 2339.0,
+      "median_impressions_90d": 3962.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 5
+    },
+    {
+      "client_id": "client_2b4306c3ed003f01",
+      "n_pages": 6,
+      "n_declines": 0,
+      "median_imp_last30": 149.0,
+      "median_impressions_90d": 183.5,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 6
+    },
+    {
+      "client_id": "client_def0955f7a377868",
+      "n_pages": 7,
+      "n_declines": 0,
+      "median_imp_last30": 348.0,
+      "median_impressions_90d": 670.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 7
+    },
+    {
+      "client_id": "client_3f0ce4d44fe94f3d",
+      "n_pages": 63,
+      "n_declines": 1,
+      "median_imp_last30": 1761.0,
+      "median_impressions_90d": 2380.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.02,
+      "k_used": 50
+    }
+  ],
+  "clients": [
+    {
+      "client_id": "client_0797ff3a1fc9a6a5",
+      "n_pages": 5,
+      "n_declines": 2,
+      "median_imp_last30": 1900.0,
+      "median_impressions_90d": 4242.0,
+      "p50_rf": 0.4,
+      "p50_baseline": 0.4,
+      "k_used": 5
+    },
+    {
+      "client_id": "client_08a6a72ff48e62c0",
+      "n_pages": 1997,
+      "n_declines": 448,
+      "median_imp_last30": 4987.0,
+      "median_impressions_90d": 15167.0,
+      "p50_rf": 0.5,
+      "p50_baseline": 0.34,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_08d2847f24cf89c1",
+      "n_pages": 4,
+      "n_declines": 0,
+      "median_imp_last30": 819.0,
+      "median_impressions_90d": 1624.5,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 4
+    },
+    {
+      "client_id": "client_157ffe4d4a595515",
+      "n_pages": 113,
+      "n_declines": 1,
+      "median_imp_last30": 592.0,
+      "median_impressions_90d": 806.0,
+      "p50_rf": 0.02,
+      "p50_baseline": 0.02,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_20259bd6705d81d4",
+      "n_pages": 1233,
+      "n_declines": 20,
+      "median_imp_last30": 3072.0,
+      "median_impressions_90d": 4224.0,
+      "p50_rf": 0.04,
+      "p50_baseline": 0.04,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_2094c6eb080311d5",
+      "n_pages": 3,
+      "n_declines": 0,
+      "median_imp_last30": 529.0,
+      "median_impressions_90d": 1448.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 3
+    },
+    {
+      "client_id": "client_23a62021009f63c4",
+      "n_pages": 5988,
+      "n_declines": 1344,
+      "median_imp_last30": 3463.5,
+      "median_impressions_90d": 8359.5,
+      "p50_rf": 0.84,
+      "p50_baseline": 0.1,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_2b4306c3ed003f01",
+      "n_pages": 6,
+      "n_declines": 0,
+      "median_imp_last30": 149.0,
+      "median_impressions_90d": 183.5,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 6
+    },
+    {
+      "client_id": "client_3197e6291363b4db",
+      "n_pages": 402,
+      "n_declines": 97,
+      "median_imp_last30": 836.5,
+      "median_impressions_90d": 2223.5,
+      "p50_rf": 0.48,
+      "p50_baseline": 0.22,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_3f0ce4d44fe94f3d",
+      "n_pages": 63,
+      "n_declines": 1,
+      "median_imp_last30": 1761.0,
+      "median_impressions_90d": 2380.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.02,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_3ffa76342f366962",
+      "n_pages": 22,
+      "n_declines": 13,
+      "median_imp_last30": 314.5,
+      "median_impressions_90d": 1061.5,
+      "p50_rf": 0.5909090909090909,
+      "p50_baseline": 0.5909090909090909,
+      "k_used": 22
+    },
+    {
+      "client_id": "client_400c21c81c8b46ef",
+      "n_pages": 5,
+      "n_declines": 0,
+      "median_imp_last30": 2339.0,
+      "median_impressions_90d": 3962.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 5
+    },
+    {
+      "client_id": "client_62f4a7e64f5e0096",
+      "n_pages": 10184,
+      "n_declines": 2269,
+      "median_imp_last30": 1664.0,
+      "median_impressions_90d": 4625.0,
+      "p50_rf": 0.3,
+      "p50_baseline": 0.24,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_65de48885f4ef01b",
+      "n_pages": 202,
+      "n_declines": 31,
+      "median_imp_last30": 1333.0,
+      "median_impressions_90d": 3391.0,
+      "p50_rf": 0.3,
+      "p50_baseline": 0.08,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_73cda7b4e4f265ea",
+      "n_pages": 11454,
+      "n_declines": 2932,
+      "median_imp_last30": 1611.0,
+      "median_impressions_90d": 4472.5,
+      "p50_rf": 0.6,
+      "p50_baseline": 0.4,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_795153d5b7850ccf",
+      "n_pages": 8,
+      "n_declines": 4,
+      "median_imp_last30": 373.0,
+      "median_impressions_90d": 2019.0,
+      "p50_rf": 0.5,
+      "p50_baseline": 0.5,
+      "k_used": 8
+    },
+    {
+      "client_id": "client_8ae2bfb5aa1ffa1e",
+      "n_pages": 1,
+      "n_declines": 0,
+      "median_imp_last30": 221.0,
+      "median_impressions_90d": 497.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 1
+    },
+    {
+      "client_id": "client_9958f0a7ae1df715",
+      "n_pages": 649,
+      "n_declines": 151,
+      "median_imp_last30": 540.0,
+      "median_impressions_90d": 1680.0,
+      "p50_rf": 0.38,
+      "p50_baseline": 0.24,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_a2eeb8899886adde",
+      "n_pages": 5,
+      "n_declines": 2,
+      "median_imp_last30": 2812.0,
+      "median_impressions_90d": 7582.0,
+      "p50_rf": 0.4,
+      "p50_baseline": 0.4,
+      "k_used": 5
+    },
+    {
+      "client_id": "client_a80fca3f171ed1de",
+      "n_pages": 281,
+      "n_declines": 51,
+      "median_imp_last30": 429.0,
+      "median_impressions_90d": 694.0,
+      "p50_rf": 0.24,
+      "p50_baseline": 0.22,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_b10cb2997d0c7c86",
+      "n_pages": 36,
+      "n_declines": 11,
+      "median_imp_last30": 2030.0,
+      "median_impressions_90d": 5217.0,
+      "p50_rf": 0.3055555555555556,
+      "p50_baseline": 0.3055555555555556,
+      "k_used": 36
+    },
+    {
+      "client_id": "client_c182d11e4862a37d",
+      "n_pages": 424,
+      "n_declines": 44,
+      "median_imp_last30": 741.5,
+      "median_impressions_90d": 1277.5,
+      "p50_rf": 0.18,
+      "p50_baseline": 0.12,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_cd12bcfd98942aa1",
+      "n_pages": 6,
+      "n_declines": 1,
+      "median_imp_last30": 633.0,
+      "median_impressions_90d": 1492.0,
+      "p50_rf": 0.16666666666666666,
+      "p50_baseline": 0.16666666666666666,
+      "k_used": 6
+    },
+    {
+      "client_id": "client_d211cb07b9059bab",
+      "n_pages": 6,
+      "n_declines": 2,
+      "median_imp_last30": 714.5,
+      "median_impressions_90d": 1720.5,
+      "p50_rf": 0.3333333333333333,
+      "p50_baseline": 0.3333333333333333,
+      "k_used": 6
+    },
+    {
+      "client_id": "client_def0955f7a377868",
+      "n_pages": 7,
+      "n_declines": 0,
+      "median_imp_last30": 348.0,
+      "median_impressions_90d": 670.0,
+      "p50_rf": 0.0,
+      "p50_baseline": 0.0,
+      "k_used": 7
+    },
+    {
+      "client_id": "client_e5c2aa26a8598242",
+      "n_pages": 215,
+      "n_declines": 4,
+      "median_imp_last30": 1088.0,
+      "median_impressions_90d": 1583.0,
+      "p50_rf": 0.04,
+      "p50_baseline": 0.02,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_fef1a8f436438636",
+      "n_pages": 3712,
+      "n_declines": 392,
+      "median_imp_last30": 1484.5,
+      "median_impressions_90d": 3579.0,
+      "p50_rf": 0.38,
+      "p50_baseline": 0.02,
+      "k_used": 50
+    },
+    {
+      "client_id": "client_ff644d8251367cbb",
+      "n_pages": 354,
+      "n_declines": 23,
+      "median_imp_last30": 1382.0,
+      "median_impressions_90d": 3692.5,
+      "p50_rf": 0.08,
+      "p50_baseline": 0.1,
+      "k_used": 50
+    }
+  ],
+  "worked_example": {
+    "available": true,
+    "selection": "declining HIGH_LEVERAGE_REFRESH page whose full-slice score is closest to the median score of that group",
+    "score_source": "Random forest fit on the full March slice, matching the playbook queue, not a leave-one-client-out score",
+    "content_id": "content_7bf497ea6afc9f34",
+    "imp_last30": 734.0,
+    "avg_pos_last30": 7.503041136430564,
+    "ctr_last30": 0.0,
+    "content_age_days": 244.0,
+    "position_tier": "page_1",
+    "score": 0.58125910545333,
+    "archetype": "HIGH_LEVERAGE_REFRESH",
+    "reason_code": "HIGH_LEVERAGE_REFRESH",
+    "action": "Refresh content",
+    "is_declining_label": 1,
+    "group_median_score": 0.58128510737287,
+    "group_n": 3208,
+    "impressions_90d": 2758.0,
+    "imp_prev30": 1234.0,
+    "impressions_90d_p75": 12168.0,
+    "page1_ctr_median": 0.20654537216561877
+  },
+  "row_count": 37385,
+  "sklearn_version": "1.9.1",
+  "discrepancy_note": "Refit LOO means do not match w06_audit_metrics.json. Headline in the paper stays on the receipt."
+}
