@@ -6,5 +6,6 @@
   "p50_loo_rf_std": 0.23664299012639262,
   "p50_time_aware_rf": 0.44,
   "global_baseline_p50": 0.34,
-  "loo_baseline_mean": 0.17344516594516593
+  "loo_baseline_mean": 0.17344516594516593,
+  "time_aware_baseline_p50": 0.34
 }
