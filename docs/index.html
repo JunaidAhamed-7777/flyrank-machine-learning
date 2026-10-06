@@ -448,7 +448,8 @@
         padding: 0;
         max-width: none;
       }
-      .toc, .skip, .fig-full, .copy-bib, .copy-status { display: none; }
+      .toc, .skip, .github-link, .fig-full, .copy-bib, .copy-status { display: none; }
+      td code, th code { overflow-wrap: normal; word-break: normal; }
       article { max-width: none; }
       a { color: #000; text-decoration: none; }
       .bib { background: transparent; }
@@ -461,7 +462,7 @@
         margin: 0.4rem 0 0.8rem;
         padding-left: 0.5rem;
       }
-      h2 { page-break-after: avoid; }
+      h2, h3 { page-break-after: avoid; }
       figure, table, .cite { page-break-inside: avoid; }
     }
   </style>
