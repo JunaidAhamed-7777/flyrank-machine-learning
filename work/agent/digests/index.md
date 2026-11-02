@@ -7,3 +7,4 @@
 - 2026-10-12 | items=5 | `digests/2026-10-12.md`
 - 2026-10-19 | items=5 | `digests/2026-10-19.md`
 - 2026-10-26 | items=5 | `digests/2026-10-26.md`
+- 2026-11-02 | items=5 | `digests/2026-11-02.md`
